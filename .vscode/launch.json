@@ -1,0 +1,12 @@
+{
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Launch",
+      "program": "${workspaceFolder}/roads.exe",
+      "args": ["-arg1", "-arg2"],
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
