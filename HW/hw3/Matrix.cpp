@@ -6,6 +6,17 @@ Matrix::Matrix(){
     rows = 0;
     columns = 0;
 }
+Matrix::Matrix(const Matrix& b){
+    rows = b.rows;
+    columns = b.columns;
+    matrix = new double*[rows];
+    for (unsigned int i = 0; i < rows; i++){
+        matrix[i] = new double[columns];
+        for (unsigned int j = 0; j < columns; j++){
+            matrix[i][j] = b.matrix[i][j];
+        }
+    }
+}
 Matrix::Matrix(unsigned int Rows, unsigned int Columns, double fill){
     if (Rows == 0 || Columns == 0){
         rows = 0;
@@ -23,6 +34,9 @@ Matrix::Matrix(unsigned int Rows, unsigned int Columns, double fill){
             }
         }
     }
+}
+Matrix::~Matrix(){
+    clear();
 }
 unsigned int Matrix::num_rows() const {
     return rows;
@@ -67,17 +81,116 @@ double* Matrix::get_column(unsigned int column) const {
 }
 Matrix* Matrix::quarter() const{
     Matrix* all_matrix = new Matrix[4];
+    unsigned int row_size;
+    unsigned int column_size;
+    if (rows == 1){
+        row_size = 1;
+    } else {
+        if (rows%2 == 0){
+            row_size = rows / 2;
+        } else {
+            row_size = (rows/2) + 1;
+        }
+    }
+    if (columns == 1){
+        column_size = 1;
+    } else {
+        if (columns%2 == 0){
+            column_size = columns / 2;
+        } else {
+            column_size = (columns/2) + 1;
+        }
+    }
+    Matrix upper_left(row_size, column_size, 0);
+    for (unsigned int i = 0; i < row_size; i++){
+        for (unsigned int j = 0; j < column_size; j++){
+            upper_left.set(i,j,matrix[i][j]);
+        }
+    }
+    all_matrix[0] = upper_left;
 
-    
-}
+    if (columns%2 == 0){
+        Matrix lower_left(row_size,column_size,0);
+        for (unsigned int i = 0; i < row_size; i++){
+            for (unsigned int j = (column_size); j < (column_size)+column_size; j++){
+                lower_left.set(i,j-column_size,matrix[i][j]);
+            }
+        }
+        all_matrix[1] = lower_left;
+    } else {
+        Matrix lower_left(row_size,column_size,0);
+        for (unsigned int i = 0; i < row_size; i++){
+            for (unsigned int j = (column_size-1); j < (column_size-1)+column_size; j++){
+                lower_left.set(i,j-column_size-1,matrix[i][j]);
+            }
+        }
+        all_matrix[1] = lower_left;
+    }
+     
+    if (rows%2 == 0){
+        Matrix upper_right(row_size,column_size,0);
+        for (unsigned int i = (row_size); i < (row_size+row_size); i++){
+            for (unsigned int j = 0; j < column_size; j++){
+                upper_right.set(i-row_size,j,matrix[i][j]);
+            }
+        }
+        all_matrix[2] = upper_right;
+    } else {
+        Matrix upper_right(row_size,column_size,0);
+        for (unsigned int i = (row_size-1); i < (row_size-1+row_size); i++){
+            for (unsigned int j = 0; j < column_size; j++){
+                upper_right.set(i-row_size+1,j,matrix[i][j]);
+            }
+        }
+        all_matrix[2] = upper_right;
+    }
+
+    if (rows%2 == 0 && columns%2 == 0){
+         Matrix lower_right(row_size, column_size, 0);
+        for (unsigned int i = (row_size); i < (row_size+row_size); i++){
+            for (unsigned int j = (column_size); j < (column_size)+column_size; j++){
+                lower_right.set(i-row_size,j-column_size,matrix[i][j]);
+            }
+        }
+        all_matrix[3] = lower_right;
+    } else if (rows%2 != 0 && columns%2 == 0) {
+        Matrix lower_right(row_size, column_size, 0);
+        for (unsigned int i = (row_size-1); i < (row_size-1+row_size); i++){
+            for (unsigned int j = (column_size); j < (column_size)+column_size; j++){
+                lower_right.set(i-row_size+1,j-column_size,matrix[i][j]);
+            }
+        }
+        all_matrix[3] = lower_right;
+    } else if (rows%2 == 0 && columns%2 != 0) {
+        Matrix lower_right(row_size, column_size, 0);
+        for (unsigned int i = (row_size); i < (row_size+row_size); i++){
+            for (unsigned int j = (column_size-1); j < (column_size-1)+column_size; j++){
+                lower_right.set(i-row_size,j-column_size+1,matrix[i][j]);
+            }
+        }
+        all_matrix[3] = lower_right;
+    } else {
+        Matrix lower_right(row_size, column_size, 0);
+        for (unsigned int i = (row_size-1); i < (row_size-1+row_size); i++){
+            for (unsigned int j = (column_size-1); j < (column_size-1)+column_size; j++){
+                lower_right.set(i-row_size+1,j-column_size+1,matrix[i][j]);
+            }
+        }
+        all_matrix[3] = lower_right;
+    } 
+
+    return all_matrix;
+}   
 
 void Matrix::clear() {
+    if (rows > 0){
     for (unsigned int i = 0; i < rows; i++){
         delete [] matrix[i];
     }
     delete [] matrix;
     rows = 0;
     columns = 0;
+    }
 }
 bool Matrix::set(unsigned int row, unsigned int column, double value){
     if ((row >= 0 && row < rows) && (column >= 0 && column < columns)){
@@ -96,18 +209,9 @@ void Matrix::multiply_by_coefficient(double coefficient){
 }
 bool Matrix::swap_row(unsigned int row1, unsigned int row2){
     if ((row1 >= 0 && row1 < rows) && (row2 >= 0 && row2 < rows)){
-        vector<double> swap1;
-        vector<double> swap2;
-        for (unsigned int i = 0; i < columns; i++){
-            swap1.push_back(matrix[row1][i]);
-            swap2.push_back(matrix[row2][i]);
-        }
-        for (unsigned int i = 0; i < swap1.size(); i++){
-            matrix[row2][i] = swap1[i];
-        }
-        for (unsigned int i = 0; i < swap2.size(); i++){
-            matrix[row1][i] = swap2[i];
-        }
+        double* filler = matrix[row1];
+        matrix[row2] = matrix[row1];
+        matrix[row1] = filler;
         return true;
     } else {
         return false;
@@ -135,7 +239,7 @@ bool Matrix::add(const Matrix& b){
     if (rows == b.rows && columns == b.columns){
         for (unsigned int i = 0; i < rows; i++){
             for (unsigned int j = 0; j < columns; j++){
-                matrix[i][j] == matrix[i][j] + b.matrix[i][j];
+                matrix[i][j] = matrix[i][j] + b.matrix[i][j];
             }
         }
         return true;
@@ -147,7 +251,7 @@ bool Matrix::subtract(const Matrix& b){
     if (rows == b.rows && columns == b.columns){
         for (unsigned int i = 0; i < rows; i++){
             for (unsigned int j = 0; j < columns; j++){
-                matrix[i][j] == matrix[i][j] - b.matrix[i][j];
+                matrix[i][j] = matrix[i][j] - b.matrix[i][j];
             }
         }
         return true;
@@ -185,8 +289,12 @@ bool operator!= (const Matrix& m1, const Matrix& m2){
     return false;
 }
 std::ostream& operator<< (std::ostream& out, const Matrix& m){
-    out << m.rows << " x " << m.columns << endl;
+    out << m.rows << " x " << m.columns << " matrix:" << endl;
     out << "[ ";
+    if (m.rows == 0){
+        out << "]";
+        out << endl;
+    }
     for (unsigned int i = 0; i < m.rows; i++){
         for (unsigned int j = 0; j < m.columns; j++){
             if (j == 0 && i != 0){
@@ -202,4 +310,16 @@ std::ostream& operator<< (std::ostream& out, const Matrix& m){
         out << endl;
     }
     return out;
+}
+Matrix& Matrix::operator= (const Matrix& m){
+    rows = m.rows;
+    columns = m.columns;
+    matrix = new double*[rows];
+    for (unsigned int i = 0; i < rows; i++){
+        matrix[i] = new double[columns];
+        for (unsigned int j = 0; j < columns; j++){
+            matrix[i][j] = m.matrix[i][j];
+        }
+    }
+    return *this;
 }

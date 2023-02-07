@@ -8,7 +8,10 @@ class Matrix{
 public:
     //Constructors
     Matrix();
+    Matrix(const Matrix& b);
     Matrix(unsigned int Rows, unsigned int Columns, double fill);
+
+    ~Matrix();
 
     unsigned int num_rows() const;
     unsigned int num_cols() const;
@@ -19,7 +22,6 @@ public:
     double* get_row(unsigned int row) const;
     double* get_column(unsigned int column) const;
     Matrix* quarter() const;
-
 
     void clear();
 
@@ -40,6 +42,8 @@ public:
     friend bool operator!= (const Matrix& m1, const Matrix& m2);
 
     friend std::ostream& operator<< (std::ostream& out, const Matrix& m);
+
+    Matrix& operator=(const Matrix& m);
 
 
 private:
