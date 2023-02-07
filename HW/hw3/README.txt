@@ -1,7 +1,7 @@
 HOMEWORK 3: MATRIX CLASS
 
 
-NAME:  < insert name >
+NAME:  < Danny Zou >
 
 
 COLLABORATORS AND OTHER RESOURCES:
@@ -10,13 +10,21 @@ List the names of everyone you talked to about this assignment
 LMS, etc.), and all of the resources (books, online reference
 material, etc.) you consulted in completing this assignment.
 
-< insert collaborators / resources >
+Collaborators:
+Ethan Girald
+Matthew Bui
+
+Resources:
+https://www.geeksforgeeks.org/operator-overloading-c/
+https://www.tutorialspoint.com/cplusplus/cpp_overloading.htm
+https://stackoverflow.com/questions/26695393/when-to-use-new-and-delete
+
 
 Remember: Your implementation for this assignment must be done on your
 own, as described in "Academic Integrity for Homework" handout.
 
 
-ESTIMATE OF # OF HOURS SPENT ON THIS ASSIGNMENT:  < insert # hours >
+ESTIMATE OF # OF HOURS SPENT ON THIS ASSIGNMENT:  < 5 >
 
 
 

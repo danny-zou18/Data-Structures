@@ -37,12 +37,6 @@ public:
 
     bool subtract(const Matrix& b);
 
-    friend bool operator== (const Matrix& m1, const Matrix& m2);
-
-    friend bool operator!= (const Matrix& m1, const Matrix& m2);
-
-    friend std::ostream& operator<< (std::ostream& out, const Matrix& m);
-
     Matrix& operator=(const Matrix& m);
 
 
@@ -52,5 +46,11 @@ private:
     double** matrix;
 
 };
+
+bool operator== (const Matrix& m1, const Matrix& m2);
+
+bool operator!= (const Matrix& m1, const Matrix& m2);
+
+std::ostream& operator<< (std::ostream& out, const Matrix& m);
 
 #endif

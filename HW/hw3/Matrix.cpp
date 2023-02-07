@@ -261,12 +261,12 @@ bool Matrix::subtract(const Matrix& b){
 }
 
 bool operator== (const Matrix& m1, const Matrix& m2){
-    if (m1.rows != m2.rows || m1.columns != m2.columns){
+    if (m1.num_rows() != m2.num_rows() || m1.num_cols() != m2.num_cols()){
         return false;
     } else {
-        for (unsigned int i = 0; i < m1.rows; i++){
-            for (unsigned int j = 0; j < m1.columns; j++){
-                if (m1.matrix[i][j] != m2.matrix[i][j]){
+        for (unsigned int i = 0; i < m1.num_rows(); i++){
+            for (unsigned int j = 0; j < m1.num_cols(); j++){
+                if (m1.get_matrix()[i][j] != m2.get_matrix()[i][j]){
                     return false;
                 }
             }
@@ -275,12 +275,12 @@ bool operator== (const Matrix& m1, const Matrix& m2){
     return true;
 }
 bool operator!= (const Matrix& m1, const Matrix& m2){
-    if (m1.rows != m2.rows || m1.columns != m2.columns){
+    if (m1.num_rows() != m2.num_rows() || m1.num_cols() != m2.num_cols()){
         return true;
     } else {
-        for (unsigned int i = 0; i < m1.rows; i++){
-            for (unsigned int j = 0; j < m1.columns; j++){
-                if (m1.matrix[i][j] != m2.matrix[i][j]){
+        for (unsigned int i = 0; i < m1.num_rows(); i++){
+            for (unsigned int j = 0; j < m1.num_cols(); j++){
+                if (m1.get_matrix()[i][j] != m2.get_matrix()[i][j]){
                     return true;
                 }
             }
@@ -289,21 +289,21 @@ bool operator!= (const Matrix& m1, const Matrix& m2){
     return false;
 }
 std::ostream& operator<< (std::ostream& out, const Matrix& m){
-    out << m.rows << " x " << m.columns << " matrix:" << endl;
+    out << m.num_rows() << " x " << m.num_cols() << " matrix:" << endl;
     out << "[ ";
-    if (m.rows == 0){
+    if (m.num_rows() == 0){
         out << "]";
         out << endl;
     }
-    for (unsigned int i = 0; i < m.rows; i++){
-        for (unsigned int j = 0; j < m.columns; j++){
+    for (unsigned int i = 0; i < m.num_rows(); i++){
+        for (unsigned int j = 0; j < m.num_cols(); j++){
             if (j == 0 && i != 0){
                 out << "  ";
             }
 
-            out << m.matrix[i][j] << " ";
+            out << m.get_matrix()[i][j] << " ";
 
-            if (i == m.rows-1 && j == m.columns-1 ){
+            if (i == m.num_rows()-1 && j == m.num_cols()-1 ){
                 out << "]";
             }
         }
