@@ -35,10 +35,10 @@ int main(){
 	std::cout << "Completed all simple tests." << std::endl;
 
 	//Uncomment this to allocate a lot of 100x100 matrices so leaks will be bigger.
-	/*
+	
 	BatchTest(100,0.1,100,100,50);
 	std::cout << "Completed all batch tests." << std::endl;
-	*/
+	
 
 	StudentTest();
 	std::cout << "Completed all student tests." << std::endl;
@@ -207,6 +207,64 @@ void SimpleTest(){  //well behaved getrow/read after
 
 //Write your own test cases here
 void StudentTest(){
+
+	Matrix m1(1,7,0);
+	assert(m1.num_rows() == 1 && m1.num_cols() == 7);
+
+	m1.set(0,0,1);
+	m1.set(0,1,2);
+	m1.set(0,2,3);
+	m1.set(0,3,4);
+	m1.set(0,4,5);
+	m1.set(0,5,6);
+	m1.set(0,6,7);
+
+	std::cout << "Single Row Matrix 1 to be quartered: " << std::endl;
+	std::cout << m1 << std::endl;
+
+	Matrix* ma1 = NULL;
+	ma1 = m1.quarter();
+	assert(ma1 != NULL);
+
+	std::cout << "UL: " << std::endl << ma1[0] << std::endl;
+	std::cout << "UR: " << std::endl << ma1[1] << std::endl;
+	std::cout << "LL: " << std::endl << ma1[2] << std::endl;
+	std::cout << "LR: " << std::endl << ma1[3] << std::endl;
+
+	for(unsigned int i=0; i<4; i++){
+		assert((ma1[i].num_rows() == 1) && (ma1[i].num_cols() == 4));
+	}
+
+	delete [] ma1;
+
+	Matrix m2(5,1,0);
+	assert(m2.num_rows() == 5 && m2.num_cols() == 1);
+
+	m2.set(0,0,1);
+	m2.set(1,0,2);
+	m2.set(2,0,3);
+	m2.set(3,0,4);
+	m2.set(4,0,5);
+	
+	std::cout << "Single Column Matrix 2 to be quartered: " << std::endl;
+	std::cout << m2 << std::endl;
+
+	Matrix* ma2 = NULL;
+	ma2 = m2.quarter();
+	assert(ma2 != NULL);
+
+	std::cout << "UL: " << std::endl << ma2[0] << std::endl;
+	std::cout << "UR: " << std::endl << ma2[1] << std::endl;
+	std::cout << "LL: " << std::endl << ma2[2] << std::endl;
+	std::cout << "LR: " << std::endl << ma2[3] << std::endl;
+
+	for(unsigned int i=0; i<4; i++){
+		assert((ma2[i].num_rows() == 3) && (ma2[i].num_cols() == 1));
+	}
+
+	delete [] ma2;
+
+
 
 }
 

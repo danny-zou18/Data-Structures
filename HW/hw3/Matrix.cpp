@@ -83,24 +83,89 @@ Matrix* Matrix::quarter() const{
     Matrix* all_matrix = new Matrix[4];
     unsigned int row_size;
     unsigned int column_size;
+    if (rows == 1 && columns == 1){
+        Matrix all(0,0,0);
+        all.set(0,0,matrix[0][0]);
+        all_matrix[0] = all;
+        all_matrix[1] = all;
+        all_matrix[2] = all;
+        all_matrix[3] = all;
+        return all_matrix;
+    }
     if (rows == 1){
         row_size = 1;
-    } else {
-        if (rows%2 == 0){
-            row_size = rows / 2;
-        } else {
-            row_size = (rows/2) + 1;
-        }
-    }
-    if (columns == 1){
-        column_size = 1;
-    } else {
         if (columns%2 == 0){
             column_size = columns / 2;
         } else {
             column_size = (columns/2) + 1;
         }
+        Matrix upper_left(row_size, column_size, 0);
+            for (unsigned int j = 0; j < column_size; j++){
+                upper_left.set(0,j,matrix[0][j]);
+            }
+        all_matrix[0] = upper_left;
+        all_matrix[2] = upper_left;
+
+        if (columns%2 == 0){
+            Matrix upper_right(row_size,column_size,0);
+                for (unsigned int j = (column_size); j < (column_size)+column_size; j++){
+                    upper_right.set(0,j-column_size,matrix[0][j]);
+                }
+            all_matrix[1] = upper_right;
+            all_matrix[3] = upper_right;
+        } else {
+            Matrix upper_right(row_size,column_size,0);
+                for (unsigned int j = (column_size-1); j < (column_size-1)+column_size; j++){
+                    upper_right.set(0,j-column_size+1,matrix[0][j]);
+                }
+            all_matrix[1] = upper_right;
+            all_matrix[3] = upper_right;
+        }
+        return all_matrix;
+    } 
+    if (columns == 1){
+        column_size = 1;
+        if (rows%2 == 0){
+            row_size = rows / 2;
+        } else {
+            row_size = (rows/2) + 1;
+        }
+
+        Matrix upper_left(row_size, column_size, 0);
+        for (unsigned int i = 0; i < row_size; i++){
+            upper_left.set(i,0,matrix[i][0]);
+        }
+        all_matrix[0] = upper_left;
+        all_matrix[1] = upper_left;
+
+        if (rows%2 == 0){
+            Matrix lower_left(row_size,column_size,0);
+            for (unsigned int i = (row_size); i < (row_size+row_size); i++){
+                lower_left.set(i-row_size,0,matrix[i][0]);
+            }
+            all_matrix[2] = lower_left;
+            all_matrix[3] = lower_left;
+        } else {
+            Matrix lower_left(row_size,column_size,0);
+            for (unsigned int i = (row_size-1); i < (row_size-1+row_size); i++){
+                lower_left.set(i-row_size+1,0,matrix[i][0]);
+            }
+            all_matrix[2] = lower_left;
+            all_matrix[3] = lower_left;
+        }
+        return all_matrix;
     }
+    if (rows%2 == 0){
+        row_size = rows / 2;
+    } else {
+        row_size = (rows/2) + 1;
+    }
+    if (columns%2 == 0){
+        column_size = columns / 2;
+    } else {
+        column_size = (columns/2) + 1;
+    }
+    
     Matrix upper_left(row_size, column_size, 0);
     for (unsigned int i = 0; i < row_size; i++){
         for (unsigned int j = 0; j < column_size; j++){
@@ -121,7 +186,7 @@ Matrix* Matrix::quarter() const{
         Matrix lower_left(row_size,column_size,0);
         for (unsigned int i = 0; i < row_size; i++){
             for (unsigned int j = (column_size-1); j < (column_size-1)+column_size; j++){
-                lower_left.set(i,j-column_size-1,matrix[i][j]);
+                lower_left.set(i,j-column_size+1,matrix[i][j]);
             }
         }
         all_matrix[1] = lower_left;
