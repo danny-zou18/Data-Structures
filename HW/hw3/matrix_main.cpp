@@ -264,8 +264,6 @@ void StudentTest(){
 
 	delete [] ma2;
 
-
-
 }
 
 //Write this if you write resize()

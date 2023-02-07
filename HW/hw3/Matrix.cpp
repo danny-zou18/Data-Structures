@@ -123,6 +123,7 @@ Matrix* Matrix::quarter() const{
         }
         return all_matrix;
     } 
+
     if (columns == 1){
         column_size = 1;
         if (rows%2 == 0){
@@ -155,6 +156,7 @@ Matrix* Matrix::quarter() const{
         }
         return all_matrix;
     }
+
     if (rows%2 == 0){
         row_size = rows / 2;
     } else {
@@ -243,7 +245,6 @@ Matrix* Matrix::quarter() const{
         }
         all_matrix[3] = lower_right;
     } 
-
     return all_matrix;
 }   
 
