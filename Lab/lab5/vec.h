@@ -57,6 +57,7 @@ template <class T> unsigned remove_matching_elements(Vec<T>& v, const T& e){
         if(*i == e){
             v.erase(i);
             count++;
+            i--;
         }
     }
     return count;

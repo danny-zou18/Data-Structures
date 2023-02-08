@@ -96,8 +96,11 @@ int main() {
   test_vec.push_back(22);
   test_vec.push_back(33);
   test_vec.push_back(11);
+  test_vec.push_back(11);
+  test_vec.push_back(11);
   test_vec.push_back(44);
   test_vec.push_back(55);
+  
   cout << "Contents of vector before running remove function" << endl;
   for (Vec<int>::size_type i = 0; i < test_vec.size(); i++){
     cout << test_vec[i] << " ";
