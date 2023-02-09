@@ -84,7 +84,7 @@ Matrix* Matrix::quarter() const{
     unsigned int row_size;
     unsigned int column_size;
     if (rows == 1 && columns == 1){
-        Matrix all(0,0,0);
+        Matrix all(1,1,0);
         all.set(0,0,matrix[0][0]);
         all_matrix[0] = all;
         all_matrix[1] = all;
@@ -295,9 +295,15 @@ void Matrix::transpose(){
             new_matrix[i][j] = matrix[j][i];
         }
     }
+    for (unsigned int i = 0; i < rows; i++){
+        delete [] matrix[i];
+    }
+    delete [] matrix;
+
     rows = new_rows;
     columns = new_columns;
     matrix = new_matrix;
+
 }
 bool Matrix::add(const Matrix& b){
     if (rows == b.rows && columns == b.columns){

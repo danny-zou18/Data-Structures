@@ -265,10 +265,40 @@ void StudentTest(){
 	delete [] ma2;
 
 	Matrix m3(3,4,0);
+	assert(m3.num_rows() == 3 && m3.num_cols() == 4);
+
+	m3.set(0,0,1);
+	m3.set(0,1,2);
+	m3.set(0,2,3);
+	m3.set(0,3,4);
+	m3.set(1,0,5);
+	m3.set(1,1,6);
+	m3.set(1,2,7);
+	m3.set(1,3,8);
+	m3.set(2,0,9);
+	m3.set(2,1,10);
+	m3.set(2,2,11);
+	m3.set(2,3,12);
 	std::cout << m3 << std::endl;
 
 	m3.transpose();
 	std::cout << m3 << std::endl;
+	assert(m3.num_rows() == 4 && m3.num_cols() == 3);
+
+	Matrix m4(1,1,5);
+	std::cout << "Single Row - Single Column Matrix 4 to be quartered: " << std::endl;
+	std::cout << m4 << std::endl;
+
+	Matrix* ma4 = NULL;
+	ma4 = m4.quarter();
+	assert(ma4 != NULL);
+
+	std::cout << "UL: " << std::endl << ma4[0] << std::endl;
+	std::cout << "UR: " << std::endl << ma4[1] << std::endl;
+	std::cout << "LL: " << std::endl << ma4[2] << std::endl;
+	std::cout << "LR: " << std::endl << ma4[3] << std::endl;
+
+	delete [] ma4;
 
 }
 
