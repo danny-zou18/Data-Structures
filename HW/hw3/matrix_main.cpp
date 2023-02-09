@@ -264,6 +264,12 @@ void StudentTest(){
 
 	delete [] ma2;
 
+	Matrix m3(3,4,0);
+	std::cout << m3 << std::endl;
+
+	m3.transpose();
+	std::cout << m3 << std::endl;
+
 }
 
 //Write this if you write resize()
