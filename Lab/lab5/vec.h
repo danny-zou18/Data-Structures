@@ -158,6 +158,10 @@ template <class T> void Vec<T>::resize(size_type n, const T& fill_in_value) {
 template <class T> void Vec<T>::print() const{
     cout << "Allocation Size: " << m_alloc << endl;
     cout << "Vector Size: " << m_size << endl;
-    cout << "Vector Data: " << m_data << endl;
+    cout << "Vector Data: ";
+    for (size_type i = 0; i < m_size; i++){
+      cout << m_data[i] << " ";
+    }
+    cout << endl;
 }
 #endif

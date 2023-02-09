@@ -118,7 +118,12 @@ int main() {
   cout << endl;
   test_vec.print();
 
-  
+  Vec<int> alot_of_cases;
+  for (unsigned int i = 0; i < 20; i++){
+      alot_of_cases.push_back(2);
+      alot_of_cases.print();
+      cout << endl;
+  }
 
   
     
