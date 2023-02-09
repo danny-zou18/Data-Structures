@@ -279,8 +279,18 @@ void StudentTest(){
 	m3.set(2,1,10);
 	m3.set(2,2,11);
 	m3.set(2,3,12);
+	std::cout << "3 x 4 Matrix to be transposed: " << std::endl;
 	std::cout << m3 << std::endl;
 
+	double* m3r1 = NULL;
+	m3r1 = m3.get_row(0);
+	assert(m3r1 != NULL);
+
+	// std::cout << "Row 1 before transposition: ";
+	// for (unsigned int i = 0; i < m3r1.size(); i++){
+
+	// }
+	
 	m3.transpose();
 	std::cout << m3 << std::endl;
 	assert(m3.num_rows() == 4 && m3.num_cols() == 3);
@@ -299,6 +309,8 @@ void StudentTest(){
 	std::cout << "LR: " << std::endl << ma4[3] << std::endl;
 
 	delete [] ma4;
+
+
 
 }
 
@@ -399,4 +411,7 @@ Matrix rref(const Matrix& m){
 		curr_col +=1 ;
 	}
 	return ret;
+	
+
+
 }
