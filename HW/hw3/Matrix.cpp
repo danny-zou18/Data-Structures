@@ -286,20 +286,18 @@ bool Matrix::swap_row(unsigned int row1, unsigned int row2){
 void Matrix::transpose(){
     unsigned int new_rows = columns;
     unsigned int new_columns = rows;
-    for (unsigned int i = 0; i < rows; i++){
-        delete [] matrix[i];
-    }
-    delete [] matrix;
     double** new_matrix = new double*[new_rows];
     for (unsigned int i = 0; i < new_rows; i++){
         new_matrix[i] = new double[new_columns];
     }
-    
-    for (unsigned int i = 0; i < rows; i++){
-        for (unsigned int j = 0; j < columns; j++){
-            new_matrix[j][i] = matrix[i][j];
+    for (unsigned int i = 0; i < new_rows; i++){
+        for (unsigned int j = 0; j < new_columns; j++){
+            new_matrix[i][j] = matrix[j][i];
         }
     }
+    rows = new_rows;
+    columns = new_columns;
+    matrix = new_matrix;
 }
 bool Matrix::add(const Matrix& b){
     if (rows == b.rows && columns == b.columns){
