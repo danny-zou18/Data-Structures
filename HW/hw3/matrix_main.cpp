@@ -380,9 +380,9 @@ void ExtraCreditTest(){
 	std::cout << std::endl;
 	
 	m5.resize(8,5,2);
-	std::cout << m5.num_rows();
-	// std::cout << "Matrix 5 after resizing: " << std::endl;
-	// std::cout << m5 << std::endl;
+	// std::cout << m5.num_rows();
+	std::cout << "Matrix 5 after resizing: " << std::endl;
+	std::cout << m5 << std::endl;
 }
 
 

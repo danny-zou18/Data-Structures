@@ -330,39 +330,29 @@ bool Matrix::subtract(const Matrix& b){
     }
 }
 void Matrix::resize(unsigned new_rows, unsigned new_columns, double fill){
-    if ((new_rows < rows && new_columns < columns) || (new_rows > rows && new_columns > columns)){
-        double** new_matrix = new double*[new_rows];
-        for (unsigned int i = 0; i < new_rows; i++ ){
-            new_matrix[i] = new double[new_columns];
-        }
-        if (new_rows > rows && new_columns > columns){
-            for (unsigned int i = 0; i < rows; i++){
-                for (unsigned int j = 0; j < columns; j++){
-                    new_matrix[i][j] = matrix[i][j];
-                }
-            }
-            for (unsigned int i = rows; i < new_rows; i++){
-                for (unsigned int j = columns; j < new_columns; j++){
-                    new_matrix[i][j] = fill;
-                }
-            }
-        } else if (new_rows < rows && new_columns < columns) {
-            for (unsigned int i = 0; i < new_rows; i++){
-                for (unsigned int j = 0; j < new_columns; j++){
-                    new_matrix[i][j] = matrix[i][j];
-                }
+    double** new_matrix = new double*[new_rows];
+    for (unsigned int i = 0; i < new_rows; i++ ){
+        new_matrix[i] = new double[new_columns];
+    }
+    for (unsigned int i = 0; i < new_rows; i++){
+        for (unsigned int j = 0; j < new_columns; j++){
+            if (i >= rows || j >= columns){
+                new_matrix[i][j] = fill;
+            } else {
+                new_matrix[i][j] = matrix[i][j];
             }
         }
-        for (unsigned int i = 0; i < rows; i++){
-            delete [] matrix[i];
-        }
-        delete [] matrix;
+    }
+    for (unsigned int i = 0; i < rows; i++){
+        delete [] matrix[i];
+    }
+    delete [] matrix;
 
-        rows = new_rows;
-        columns = new_columns;
-        matrix = new_matrix;
-    } 
-}
+    rows = new_rows;
+    columns = new_columns;
+    matrix = new_matrix;
+} 
+
 
 
 bool operator== (const Matrix& m1, const Matrix& m2){

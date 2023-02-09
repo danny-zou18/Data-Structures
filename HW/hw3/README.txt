@@ -13,6 +13,8 @@ material, etc.) you consulted in completing this assignment.
 Collaborators:
 Ethan Girald
 Matthew Bui
+Vito Salvaggio
+Armaan Shivpuri
 
 Resources:
 https://www.geeksforgeeks.org/operator-overloading-c/
@@ -23,10 +25,7 @@ https://stackoverflow.com/questions/26695393/when-to-use-new-and-delete
 Remember: Your implementation for this assignment must be done on your
 own, as described in "Academic Integrity for Homework" handout.
 
-
-ESTIMATE OF # OF HOURS SPENT ON THIS ASSIGNMENT:  < 5 >
-
-
+ESTIMATE OF # OF HOURS SPENT ON THIS ASSIGNMENT:  < 8 >
 
 ORDER NOTATION:
 For each of the functions below, write the order notation O().
@@ -35,25 +34,25 @@ number of columns.  You should assume that calling new [] or delete []
 on an array will take time proportional to the number of elements in
 the array.
 
-get
+get O(1)
 
-set
+set O(1)
 
-num_rows
+num_rows O(1)
 
-get_column
+get_column O(1)
 
-operator<<
+operator<< O(m*n)
 
-quarter
+quarter O(m^2*n^2)
 
-operator==
+operator== O(m*n)
 
-operator!=
+operator!= O(m*n)
 
-swap_rows
+swap_rows O(1)
 
-rref (provided in matrix_main.cpp)
+rref (provided in matrix_main.cpp) O(m^3 * n^3)
 
 
 
@@ -63,13 +62,18 @@ What tools did you use (gdb/lldb/Visual Studio debugger,
 Valgrind/Dr. Memory, std::cout & print, etc.)?  How did you test the
 "corner cases" of your Matrix class design & implementation?
 
+The only issues I really had with my program was memory issues. To resolve these issues, I just used Valgrind to find memory leaks and errors.
+For the corner cases that I can think of, which is if you have to quarter a matrix with either 1 row or column, I just
+implemented a simple test case in my student test cases.
+
 
 EXTRA CREDIT: 
-Indicate here if you implemented resize() for extra credit.  
+Indicate here if you implemented resize() for extra credit.
+I have
 Also document the order notation for your resize() function.
-
+O(m^2 * n^3)
 
 
 MISC. COMMENTS TO GRADER:  
 (optional, please be concise!)
-
+None, thank you
