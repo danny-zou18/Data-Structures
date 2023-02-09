@@ -38,6 +38,10 @@ public:
     bool subtract(const Matrix& b);
 
     Matrix& operator=(const Matrix& m);
+    
+    void resize(unsigned rows, unsigned columns, double fill);
+
+    
 
 
 private:

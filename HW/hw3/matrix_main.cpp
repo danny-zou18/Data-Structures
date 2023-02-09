@@ -44,10 +44,10 @@ int main(){
 	std::cout << "Completed all student tests." << std::endl;
 
 	//Uncomment this if you write the resize() function.
-	/*
+	
 	ExtraCreditTest();
 	std::cout << "Completed all student extra credit tests." << std::endl;
-	*/
+	
 	return 0;
 }
 
@@ -286,14 +286,74 @@ void StudentTest(){
 	m3r1 = m3.get_row(0);
 	assert(m3r1 != NULL);
 
-	// std::cout << "Row 1 before transposition: ";
-	// for (unsigned int i = 0; i < m3r1.size(); i++){
+	std::cout << "Row 1 before transposition: ";
+	for (unsigned int i = 0; i < m3.num_cols(); i++){
+		std::cout << m3r1[i] << " ";
+	}
+	std::cout << std::endl;
+	delete [] m3r1;
 
-	// }
+	double* m3r2 = NULL;
+	m3r2 = m3.get_row(1);
+	assert(m3r2 != NULL);
+
+	std::cout << "Row 2 before transposition: ";
+	for (unsigned int i = 0; i < m3.num_cols(); i++){
+		std::cout << m3r2[i] << " ";
+	}
+	std::cout << std::endl;
+	delete [] m3r2;
+
+	double* m3r3 = NULL;
+	m3r3 = m3.get_row(2);
+	assert(m3r3 != NULL);
+
+	std::cout << "Row 3 before transposition: ";
+	for (unsigned int i = 0; i < m3.num_cols(); i++){
+		std::cout << m3r3[i] << " ";
+	}
+	std::cout << std::endl;
+	std::cout << std::endl;
+	delete [] m3r3;
 	
 	m3.transpose();
+	std::cout << "Matrix 3 after tranposition: " << std::endl;
 	std::cout << m3 << std::endl;
 	assert(m3.num_rows() == 4 && m3.num_cols() == 3);
+
+	double* m3c1 = NULL;
+	m3c1 = m3.get_column(0);
+	assert(m3c1 != NULL);
+
+	std::cout << "Column 1 after transposition: ";
+	for (unsigned int i = 0; i < m3.num_rows(); i++){
+		std::cout << m3c1[i] << " ";
+	}
+	std::cout << std::endl;
+	delete [] m3c1;
+
+	double* m3c2 = NULL;
+	m3c2 = m3.get_column(1);
+	assert(m3c2 != NULL);
+
+	std::cout << "Column 2 after transposition: ";
+	for (unsigned int i = 0; i < m3.num_rows(); i++){
+		std::cout << m3c2[i] << " ";
+	}
+	std::cout << std::endl;
+	delete [] m3c2;
+
+	double* m3c3 = NULL;
+	m3c3 = m3.get_column(2);
+	assert(m3c3 != NULL);
+
+	std::cout << "Column 3 after transposition: ";
+	for (unsigned int i = 0; i < m3.num_rows(); i++){
+		std::cout << m3c3[i] << " ";
+	}
+	std::cout << std::endl;
+	delete [] m3c3;
+
 
 	Matrix m4(1,1,5);
 	std::cout << "Single Row - Single Column Matrix 4 to be quartered: " << std::endl;
@@ -310,13 +370,19 @@ void StudentTest(){
 
 	delete [] ma4;
 
-
-
 }
 
 //Write this if you write resize()
 void ExtraCreditTest(){
-
+	Matrix m5(3,4,4);
+	std::cout << "Matrix 5 to be resized: " << std::endl;
+	std::cout << m5 << std::endl;
+	std::cout << std::endl;
+	
+	m5.resize(8,5,2);
+	std::cout << m5.num_rows();
+	// std::cout << "Matrix 5 after resizing: " << std::endl;
+	// std::cout << m5 << std::endl;
 }
 
 

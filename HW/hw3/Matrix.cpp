@@ -57,8 +57,8 @@ bool Matrix::get(unsigned int row, unsigned int column, double& value) const {
 }
 double* Matrix::get_row(unsigned int row) const{
     if (row >= 0 && row < rows){
-        double* row_values = new double[rows];
-        for (unsigned int i = 0; i < rows; i++){
+        double* row_values = new double[columns];
+        for (unsigned int i = 0; i < columns; i++){
             row_values[i] = matrix[row][i];
         }
         return row_values;
@@ -69,8 +69,8 @@ double* Matrix::get_row(unsigned int row) const{
 }
 double* Matrix::get_column(unsigned int column) const {
     if (column >= 0 && column < columns){
-        double* column_values = new double[columns];
-        for (unsigned int i = 0; i < columns; i++){
+        double* column_values = new double[rows];
+        for (unsigned int i = 0; i < rows; i++){
             column_values[i] = matrix[i][column];
         }
         return column_values;
@@ -280,7 +280,7 @@ bool Matrix::swap_row(unsigned int row1, unsigned int row2){
         matrix[row1] = filler;
         return true;
     } else {
-        return false;
+        return false; 
     }
 }
 void Matrix::transpose(){
@@ -329,6 +329,41 @@ bool Matrix::subtract(const Matrix& b){
         return false;
     }
 }
+void Matrix::resize(unsigned new_rows, unsigned new_columns, double fill){
+    if ((new_rows < rows && new_columns < columns) || (new_rows > rows && new_columns > columns)){
+        double** new_matrix = new double*[new_rows];
+        for (unsigned int i = 0; i < new_rows; i++ ){
+            new_matrix[i] = new double[new_columns];
+        }
+        if (new_rows > rows && new_columns > columns){
+            for (unsigned int i = 0; i < rows; i++){
+                for (unsigned int j = 0; j < columns; j++){
+                    new_matrix[i][j] = matrix[i][j];
+                }
+            }
+            for (unsigned int i = rows; i < new_rows; i++){
+                for (unsigned int j = columns; j < new_columns; j++){
+                    new_matrix[i][j] = fill;
+                }
+            }
+        } else if (new_rows < rows && new_columns < columns) {
+            for (unsigned int i = 0; i < new_rows; i++){
+                for (unsigned int j = 0; j < new_columns; j++){
+                    new_matrix[i][j] = matrix[i][j];
+                }
+            }
+        }
+        for (unsigned int i = 0; i < rows; i++){
+            delete [] matrix[i];
+        }
+        delete [] matrix;
+
+        rows = new_rows;
+        columns = new_columns;
+        matrix = new_matrix;
+    } 
+}
+
 
 bool operator== (const Matrix& m1, const Matrix& m2){
     if (m1.num_rows() != m2.num_rows() || m1.num_cols() != m2.num_cols()){
