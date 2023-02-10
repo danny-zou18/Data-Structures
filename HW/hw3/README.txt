@@ -15,6 +15,7 @@ Ethan Girald
 Matthew Bui
 Vito Salvaggio
 Armaan Shivpuri
+David Chong
 
 Resources:
 https://www.geeksforgeeks.org/operator-overloading-c/
@@ -40,11 +41,11 @@ set O(1)
 
 num_rows O(1)
 
-get_column O(1)
+get_column O(m)
 
 operator<< O(m*n)
 
-quarter O(m^2*n^2)
+quarter O(m*n)
 
 operator== O(m*n)
 
@@ -52,7 +53,7 @@ operator!= O(m*n)
 
 swap_rows O(1)
 
-rref (provided in matrix_main.cpp) O(m^3 * n^3)
+rref (provided in matrix_main.cpp) O(m * n)
 
 
 
@@ -71,7 +72,7 @@ EXTRA CREDIT:
 Indicate here if you implemented resize() for extra credit.
 I have
 Also document the order notation for your resize() function.
-O(m^2 * n^3)
+O(m * n)
 
 
 MISC. COMMENTS TO GRADER:  

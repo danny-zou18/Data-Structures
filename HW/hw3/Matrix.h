@@ -10,9 +10,9 @@ public:
     Matrix();
     Matrix(const Matrix& b);
     Matrix(unsigned int Rows, unsigned int Columns, double fill);
+    ~Matrix(); //Deconstructor
 
-    ~Matrix();
-
+    //Accessors
     unsigned int num_rows() const;
     unsigned int num_cols() const;
     double** get_matrix() const;
@@ -23,6 +23,7 @@ public:
     double* get_column(unsigned int column) const;
     Matrix* quarter() const;
 
+    //Modifiers
     void clear();
 
     bool set(unsigned int row, unsigned int column, double value);
@@ -41,16 +42,13 @@ public:
     
     void resize(unsigned rows, unsigned columns, double fill);
 
-    
-
-
 private:
     unsigned int rows;
     unsigned int columns;
     double** matrix;
 
 };
-
+//Non-member functions
 bool operator== (const Matrix& m1, const Matrix& m2);
 
 bool operator!= (const Matrix& m1, const Matrix& m2);

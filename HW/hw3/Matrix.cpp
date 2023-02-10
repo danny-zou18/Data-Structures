@@ -2,10 +2,12 @@
 
 using std::endl; using std::vector;
 
+//Initializing default constructor
 Matrix::Matrix(){
     rows = 0;
     columns = 0;
 }
+//Copy constructor taking another matrix as the argument to be copied
 Matrix::Matrix(const Matrix& b){
     rows = b.rows;
     columns = b.columns;
@@ -17,36 +19,39 @@ Matrix::Matrix(const Matrix& b){
         }
     }
 }
+//Basic constructor
 Matrix::Matrix(unsigned int Rows, unsigned int Columns, double fill){
     if (Rows == 0 || Columns == 0){
         rows = 0;
-        columns = 0;
+        columns = 0; // Set the rows and columns
     } else {
         rows = Rows;
         columns = Columns;
         matrix = new double*[rows];
-        for (unsigned int i = 0; i < rows; i++){
+        for (unsigned int i = 0; i < rows; i++){ //Create the 2-d array that stores the matrix
             matrix[i] = new double[columns];
         }
         for (unsigned int i = 0; i < rows; i++){
-            for (unsigned int j = 0; j < columns; j++){
+            for (unsigned int j = 0; j < columns; j++){ //Make every spot of that 2-d array/matrix into fill
                 matrix[i][j] = fill;
             }
         }
     }
 }
+//Deconstructor
 Matrix::~Matrix(){
     clear();
 }
-unsigned int Matrix::num_rows() const {
+unsigned int Matrix::num_rows() const { // Returns the number of rows
     return rows;
 }
-unsigned int Matrix::num_cols() const {
+unsigned int Matrix::num_cols() const { // Returns the number of columns
     return columns;
 }
-double** Matrix::get_matrix() const {
+double** Matrix::get_matrix() const { // Returns the 2-D array that is the matrix
     return matrix;
 }
+//Get function that stores the value at specified location into value
 bool Matrix::get(unsigned int row, unsigned int column, double& value) const {
     if ((row >= 0 && row < rows) && (column >= 0 && column < columns)){
         value = matrix[row][column];
@@ -55,6 +60,8 @@ bool Matrix::get(unsigned int row, unsigned int column, double& value) const {
         return false;
     }
 }
+//Get row function that gets all the values at specified row and puts it 
+//into a double pointer that gets returned
 double* Matrix::get_row(unsigned int row) const{
     if (row >= 0 && row < rows){
         double* row_values = new double[columns];
@@ -67,6 +74,8 @@ double* Matrix::get_row(unsigned int row) const{
         return row_values;
     }
 }
+//Get column function that gets all the values at specified column and put its
+//into a double pointer that gets returned
 double* Matrix::get_column(unsigned int column) const {
     if (column >= 0 && column < columns){
         double* column_values = new double[rows];
@@ -79,10 +88,14 @@ double* Matrix::get_column(unsigned int column) const {
         return column_values;
     }
 }
+//Quarter function that splits matrix into 4 even sections, 
+// upper left, upper right, lower left, lower right
 Matrix* Matrix::quarter() const{
+    //Matrix pointer that stores all the sections as seperate matrices
     Matrix* all_matrix = new Matrix[4];
     unsigned int row_size;
     unsigned int column_size;
+    //Special case for if both row size and column size is 1
     if (rows == 1 && columns == 1){
         Matrix all(1,1,0);
         all.set(0,0,matrix[0][0]);
@@ -92,20 +105,24 @@ Matrix* Matrix::quarter() const{
         all_matrix[3] = all;
         return all_matrix;
     }
+    //Case for if row size is 1
     if (rows == 1){
         row_size = 1;
+        //Calculate section dimensions based on if original dimensions are odd or even
         if (columns%2 == 0){
             column_size = columns / 2;
         } else {
             column_size = (columns/2) + 1;
         }
+        //If row is equal to 1, the upper left section is going to be equal to the upper right section
         Matrix upper_left(row_size, column_size, 0);
             for (unsigned int j = 0; j < column_size; j++){
                 upper_left.set(0,j,matrix[0][j]);
             }
         all_matrix[0] = upper_left;
         all_matrix[2] = upper_left;
-
+        
+        //And also lower left section is going to be equal to the lower right section
         if (columns%2 == 0){
             Matrix upper_right(row_size,column_size,0);
                 for (unsigned int j = (column_size); j < (column_size)+column_size; j++){
@@ -123,22 +140,23 @@ Matrix* Matrix::quarter() const{
         }
         return all_matrix;
     } 
-
+    //Case for if columns is 1
     if (columns == 1){
         column_size = 1;
+        //Calculate section dimensions based on if original dimensions are odd or even
         if (rows%2 == 0){
             row_size = rows / 2;
         } else {
             row_size = (rows/2) + 1;
         }
-
+        //If columns is equal to 1, then the upper left section is going to be equal to the lower left section
         Matrix upper_left(row_size, column_size, 0);
         for (unsigned int i = 0; i < row_size; i++){
             upper_left.set(i,0,matrix[i][0]);
         }
         all_matrix[0] = upper_left;
         all_matrix[1] = upper_left;
-
+        //Similarly, the upper right section is going to be equal to the lower right section
         if (rows%2 == 0){
             Matrix lower_left(row_size,column_size,0);
             for (unsigned int i = (row_size); i < (row_size+row_size); i++){
@@ -156,7 +174,7 @@ Matrix* Matrix::quarter() const{
         }
         return all_matrix;
     }
-
+    //Calculate section dimensions based on if original dimensions are odd or even
     if (rows%2 == 0){
         row_size = rows / 2;
     } else {
@@ -167,7 +185,7 @@ Matrix* Matrix::quarter() const{
     } else {
         column_size = (columns/2) + 1;
     }
-    
+    //Gets the upper left values of original matrix and puts it into the new upper left matrix
     Matrix upper_left(row_size, column_size, 0);
     for (unsigned int i = 0; i < row_size; i++){
         for (unsigned int j = 0; j < column_size; j++){
@@ -176,6 +194,7 @@ Matrix* Matrix::quarter() const{
     }
     all_matrix[0] = upper_left;
 
+    //Gets the upper right values of original matrix and puts it into the new upper right matrix
     if (columns%2 == 0){
         Matrix lower_left(row_size,column_size,0);
         for (unsigned int i = 0; i < row_size; i++){
@@ -193,7 +212,7 @@ Matrix* Matrix::quarter() const{
         }
         all_matrix[1] = lower_left;
     }
-     
+    //Gets the lower left values of original matrix and puts it into the new lower left matrix
     if (rows%2 == 0){
         Matrix upper_right(row_size,column_size,0);
         for (unsigned int i = (row_size); i < (row_size+row_size); i++){
@@ -211,7 +230,7 @@ Matrix* Matrix::quarter() const{
         }
         all_matrix[2] = upper_right;
     }
-
+    //Gets the lower right values of original matrix and puts it into the new lower right matrix
     if (rows%2 == 0 && columns%2 == 0){
          Matrix lower_right(row_size, column_size, 0);
         for (unsigned int i = (row_size); i < (row_size+row_size); i++){
@@ -247,17 +266,18 @@ Matrix* Matrix::quarter() const{
     } 
     return all_matrix;
 }   
-
+//Clear function that clears all allocated data
 void Matrix::clear() {
     if (rows > 0){
-    for (unsigned int i = 0; i < rows; i++){
-        delete [] matrix[i];
+    for (unsigned int i = 0; i < rows; i++){ 
+        delete [] matrix[i]; //First delete the memory inside matrix
     }
-    delete [] matrix;
+    delete [] matrix; //Then delete matrix itself
     rows = 0;
     columns = 0;
     }
 }
+//Set function that sets the specified matrix location as the given value
 bool Matrix::set(unsigned int row, unsigned int column, double value){
     if ((row >= 0 && row < rows) && (column >= 0 && column < columns)){
         matrix[row][column] = value;
@@ -266,6 +286,7 @@ bool Matrix::set(unsigned int row, unsigned int column, double value){
         return false;
     }
 }
+//Matrix multiplication function that multiplies all values inside a matrix with given coefficient
 void Matrix::multiply_by_coefficient(double coefficient){
     for (unsigned int i = 0; i < rows; i++){
         for (unsigned int j = 0; j < columns; j++){
@@ -273,16 +294,18 @@ void Matrix::multiply_by_coefficient(double coefficient){
         }
     }
 }
+//Swap row function that swaps two givens in a matrix if the parameters are valid
 bool Matrix::swap_row(unsigned int row1, unsigned int row2){
     if ((row1 >= 0 && row1 < rows) && (row2 >= 0 && row2 < rows)){
-        double* filler = matrix[row1];
-        matrix[row2] = matrix[row1];
-        matrix[row1] = filler;
+        double* filler = matrix[row2]; //Make a filler double pointer to store the first row
+        matrix[row2] = matrix[row1]; //Set the values of first row into the second row
+        matrix[row1] = filler; //Set the values of second row into the first row
         return true;
     } else {
         return false; 
     }
 }
+//Transpose function that flips the dimensions of the matrix and also the values inside of it
 void Matrix::transpose(){
     unsigned int new_rows = columns;
     unsigned int new_columns = rows;
@@ -290,11 +313,13 @@ void Matrix::transpose(){
     for (unsigned int i = 0; i < new_rows; i++){
         new_matrix[i] = new double[new_columns];
     }
+    //Nested for loop that flips the values inside the matrix
     for (unsigned int i = 0; i < new_rows; i++){
         for (unsigned int j = 0; j < new_columns; j++){
             new_matrix[i][j] = matrix[j][i];
         }
     }
+    //Deletes the old allocated memory
     for (unsigned int i = 0; i < rows; i++){
         delete [] matrix[i];
     }
@@ -302,9 +327,11 @@ void Matrix::transpose(){
 
     rows = new_rows;
     columns = new_columns;
-    matrix = new_matrix;
+    matrix = new_matrix; //Assign the newly allocated memory/values to the main matrix
 
 }
+//Function thats adds the values of given matrix into current matrix, returns true if parameters are valid
+//and false if not
 bool Matrix::add(const Matrix& b){
     if (rows == b.rows && columns == b.columns){
         for (unsigned int i = 0; i < rows; i++){
@@ -317,6 +344,8 @@ bool Matrix::add(const Matrix& b){
         return false;
     }
 }
+//Function that subtracts the values of given matrix from current matrix, returns true if parameters are valid
+//and false if not
 bool Matrix::subtract(const Matrix& b){
     if (rows == b.rows && columns == b.columns){
         for (unsigned int i = 0; i < rows; i++){
@@ -329,6 +358,9 @@ bool Matrix::subtract(const Matrix& b){
         return false;
     }
 }
+//Extra credit resize function that resizes the current matrix with the given new dimensions
+//If the given dimensions are bigger than current dimensions, then fill those newly created spaces with given
+//fill value
 void Matrix::resize(unsigned new_rows, unsigned new_columns, double fill){
     double** new_matrix = new double*[new_rows];
     for (unsigned int i = 0; i < new_rows; i++ ){
@@ -343,6 +375,7 @@ void Matrix::resize(unsigned new_rows, unsigned new_columns, double fill){
             }
         }
     }
+    //Delete old allocated space
     for (unsigned int i = 0; i < rows; i++){
         delete [] matrix[i];
     }
@@ -350,16 +383,16 @@ void Matrix::resize(unsigned new_rows, unsigned new_columns, double fill){
 
     rows = new_rows;
     columns = new_columns;
-    matrix = new_matrix;
+    matrix = new_matrix; 
 } 
-
-
-
+// == Operator that compares the two given matrices and returns true if they are the same
 bool operator== (const Matrix& m1, const Matrix& m2){
     if (m1.num_rows() != m2.num_rows() || m1.num_cols() != m2.num_cols()){
         return false;
     } else {
-        for (unsigned int i = 0; i < m1.num_rows(); i++){
+        //Nested for loop that compares every single value in the two given matrices
+        //if any two values are not the same, then return false
+        for (unsigned int i = 0; i < m1.num_rows(); i++){ 
             for (unsigned int j = 0; j < m1.num_cols(); j++){
                 if (m1.get_matrix()[i][j] != m2.get_matrix()[i][j]){
                     return false;
@@ -369,10 +402,13 @@ bool operator== (const Matrix& m1, const Matrix& m2){
     }
     return true;
 }
+// != Operator that compares the two given matrices and returns true if any two values are not the same
 bool operator!= (const Matrix& m1, const Matrix& m2){
     if (m1.num_rows() != m2.num_rows() || m1.num_cols() != m2.num_cols()){
         return true;
     } else {
+        //Nested for loop that compares every single value in the two given matrices
+        //if any two vales are not the same, return true
         for (unsigned int i = 0; i < m1.num_rows(); i++){
             for (unsigned int j = 0; j < m1.num_cols(); j++){
                 if (m1.get_matrix()[i][j] != m2.get_matrix()[i][j]){
@@ -383,6 +419,7 @@ bool operator!= (const Matrix& m1, const Matrix& m2){
     }
     return false;
 }
+//out operator that prints the matrix in a formatted way
 std::ostream& operator<< (std::ostream& out, const Matrix& m){
     out << m.num_rows() << " x " << m.num_cols() << " matrix:" << endl;
     out << "[ ";
@@ -406,6 +443,8 @@ std::ostream& operator<< (std::ostream& out, const Matrix& m){
     }
     return out;
 }
+//Assignment operator that does the same thing as the copy constructor, copy the given matrix exactly into
+//the wanted new matrix
 Matrix& Matrix::operator= (const Matrix& m){
     rows = m.rows;
     columns = m.columns;

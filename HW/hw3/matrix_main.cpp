@@ -207,7 +207,7 @@ void SimpleTest(){  //well behaved getrow/read after
 
 //Write your own test cases here
 void StudentTest(){
-
+	//Test case for quarter function if a matrix only has a single row
 	Matrix m1(1,7,0);
 	assert(m1.num_rows() == 1 && m1.num_cols() == 7);
 
@@ -237,6 +237,7 @@ void StudentTest(){
 
 	delete [] ma1;
 
+	//Test case for quarter function if a matrix only has a single column
 	Matrix m2(5,1,0);
 	assert(m2.num_rows() == 5 && m2.num_cols() == 1);
 
@@ -264,6 +265,7 @@ void StudentTest(){
 
 	delete [] ma2;
 
+	//Test Case for transposing a 3 x 4 Matrix into a 4 x 3 Matrix
 	Matrix m3(3,4,0);
 	assert(m3.num_rows() == 3 && m3.num_cols() == 4);
 
@@ -279,13 +281,16 @@ void StudentTest(){
 	m3.set(2,1,10);
 	m3.set(2,2,11);
 	m3.set(2,3,12);
-	std::cout << "3 x 4 Matrix to be transposed: " << std::endl;
+	std::cout << "3 x 4 Matrix to be transposed and row swapped: " << std::endl;
 	std::cout << m3 << std::endl;
+
+	m3.swap_row(1,2);
 
 	double* m3r1 = NULL;
 	m3r1 = m3.get_row(0);
 	assert(m3r1 != NULL);
 
+	//Testing get row function
 	std::cout << "Row 1 before transposition: ";
 	for (unsigned int i = 0; i < m3.num_cols(); i++){
 		std::cout << m3r1[i] << " ";
@@ -325,6 +330,7 @@ void StudentTest(){
 	m3c1 = m3.get_column(0);
 	assert(m3c1 != NULL);
 
+	//Testing get column function
 	std::cout << "Column 1 after transposition: ";
 	for (unsigned int i = 0; i < m3.num_rows(); i++){
 		std::cout << m3c1[i] << " ";
@@ -354,7 +360,7 @@ void StudentTest(){
 	std::cout << std::endl;
 	delete [] m3c3;
 
-
+	//Test case for quarter function if a matrix has only 1 row and 1 column
 	Matrix m4(1,1,5);
 	std::cout << "Single Row - Single Column Matrix 4 to be quartered: " << std::endl;
 	std::cout << m4 << std::endl;
@@ -374,6 +380,7 @@ void StudentTest(){
 
 //Write this if you write resize()
 void ExtraCreditTest(){
+	//Testing resize function
 	Matrix m5(3,4,4);
 	std::cout << "Matrix 5 to be resized: " << std::endl;
 	std::cout << m5 << std::endl;
