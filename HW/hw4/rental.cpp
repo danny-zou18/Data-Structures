@@ -7,7 +7,7 @@
 
 using std::cerr; using std::cout; using std::endl; using std::string; using std::list;
 
-int main(unsigned int argc, char* argv[]){
+int main(int argc, char* argv[]){
 
     if (argc != 5){
         cerr << "Not enough arguments." << endl;
@@ -34,52 +34,34 @@ int main(unsigned int argc, char* argv[]){
         exit(1);
     }
 
+    list<Inventory> inventory;
+
     string in;
     int quantity;
     string name;
+
     while (in_inven >> in){
         in_inven >> quantity;
         in_inven >> name;
         int id = stoi(in.substr(1));
         if (in[0] != 'T' || id <= 0){
             cerr << "Invalid inventory ID " << id << " found in the inventory file." << endl;
+            continue;
         }
-        list<Inventory> inventory;
-        
+
+        Inventory item(id,quantity,name);
+
         list<Inventory>::iterator it;
+
         for (it = inventory.begin(); it != inventory.end(); it++){
-            if ((*(it++)) > (*)){
-
+            if (item.getId() < it->getId()){
+                inventory.insert(it,item);
             }
-
-
-            
         }
-
-
-
-
-
-
     }
-    
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    for (list<Inventory>::iterator it = inventory.begin(); it != inventory.end(); it++){
+        cout << it->getName() << endl;
+    }
 
 
     return 0;

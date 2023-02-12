@@ -7,6 +7,11 @@ class Inventory{
 public:
     Inventory(unsigned a_id, unsigned aQuantity, const string& the_name);
 
+    //Accessors
+    unsigned getId() const {return id;}
+    const string& getName() const {return name;}
+    unsigned getQuantity() const {return quantity;}
+
 
 
 private:
