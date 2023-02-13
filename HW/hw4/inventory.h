@@ -5,7 +5,7 @@ using std::string;
 
 class Inventory{
 public:
-    Inventory(unsigned a_id, unsigned aQuantity, const string& the_name);
+    Inventory(unsigned a_id, unsigned aQuantity, const string& item_name);
 
     //Accessors
     unsigned getId() const {return id;}
@@ -15,9 +15,9 @@ public:
 
 
 private:
-    unsigned id;
+    int id;
     string name;
-    unsigned quantity;
+    int quantity;
 };
 
 

@@ -7,6 +7,35 @@
 
 using std::cerr; using std::cout; using std::endl; using std::string; using std::list;
 
+void sort_inventory(list<Inventory>& inventory){
+    list<Inventory>::iterator it = inventory.begin();
+    list<Inventory>::iterator nextIt = it; nextIt++;
+    for(it = inventory.begin(); it != inventory.end(); it++){
+        while (nextIt != inventory.end() && nextIt != it){
+            if (nextIt->getId() > it->getId()){
+                Inventory temp = *it;
+                inventory.erase(it);
+                inventory.insert(nextIt,temp);
+                break;
+            } else {
+                nextIt++;
+            }
+        }
+
+        // for (list<Inventory>::iterator nextIt = inventory.begin(); nextIt != it;){
+        //     if (nextIt->getId() > it->getId()){
+        //         Inventory temp = *it;
+        //         inventory.erase(it);
+        //         inventory.insert(nextIt, temp);
+        //         break;
+        //     } else {
+        //         nextIt++;
+        //     }
+        // }
+    }
+}
+
+
 int main(int argc, char* argv[]){
 
     if (argc != 5){
@@ -33,36 +62,52 @@ int main(int argc, char* argv[]){
         cerr << "Can not open " << argv[4] << " to write!" << endl;
         exit(1);
     }
-
     list<Inventory> inventory;
 
     string in;
     int quantity;
     string name;
-
     while (in_inven >> in){
         in_inven >> quantity;
         in_inven >> name;
-        int id = stoi(in.substr(1));
-        if (in[0] != 'T' || id <= 0){
-            cerr << "Invalid inventory ID " << id << " found in the inventory file." << endl;
+        int item_id = stoi(in.substr(1));
+        if (in[0] != 'T' || item_id <= 0){
+            cerr << "Invalid inventory ID " << item_id << " found in the inventory file." << endl;
+            continue;
+        }
+        Inventory item(item_id,quantity,name);
+        inventory.push_back(item);
+
+    }
+    sort_inventory(inventory);
+
+    list<Customer> customers;
+
+    string in;
+    string action;
+    int timestamp;
+    int item_quantity;
+    string part_id;
+    string custo_name;
+    while (in_custo >> in){
+        in_custo >> action;
+        in_custo >> timestamp;
+        in_custo >> item_quantity;
+        in_custo >> part_id;
+        in_custo >> custo_name;
+        int custo_id = stoi(in.substr(1));
+        if (in[0] != 'C' || custo_id <= 0){
+            cerr << "Invalid customer information found for ID " << custo_id << " in the customer file." << endl;
             continue;
         }
 
-        Inventory item(id,quantity,name);
 
-        list<Inventory>::iterator it;
 
-        for (it = inventory.begin(); it != inventory.end(); it++){
-            if (item.getId() < it->getId()){
-                inventory.insert(it,item);
-            }
-        }
-    }
-    for (list<Inventory>::iterator it = inventory.begin(); it != inventory.end(); it++){
-        cout << it->getName() << endl;
+
+
     }
 
 
+    
     return 0;
 }

@@ -1,8 +1,8 @@
 #include "inventory.h"
 
-Inventory::Inventory(unsigned a_id, unsigned aQuantity, const string& the_name){
-    id = a_id;
+Inventory::Inventory(int item_id, unsigned aQuantity, const string& item_name){
+    id = item_id;
     quantity = aQuantity;
-    name = the_name;
+    name = item_name;
 }
 

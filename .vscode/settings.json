@@ -74,7 +74,8 @@
     "random": "cpp",
     "utility": "cpp",
     "cinttypes": "cpp",
-    "__verbose_abort": "cpp"
+    "__verbose_abort": "cpp",
+    "list": "cpp"
   },
   "files.autoSave": "afterDelay"
 }
