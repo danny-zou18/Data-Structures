@@ -2,8 +2,8 @@
 #include <fstream>
 #include <string>
 #include <list>
-#include "customer.h"
 #include "inventory.h"
+#include "customer.h"
 
 using std::cerr; using std::cout; using std::endl; using std::string; using std::list;
 
@@ -116,28 +116,35 @@ int main(int argc, char* argv[]){
 
     }
     sort_inventory(inventory); //Sort the inventory based on item id
+    for (list<Inventory>::iterator it = inventory.begin(); it != inventory.end(); it++){
+        cout << it->getId() << endl;
+    }
+    cout << endl;
 
     list<Customer> customers;
 
-    list<Customer> pending_customers;
+    list<Customer*> pending_customers;
 
     string in1;
     string action;
     int timestamp;
     int item_quantity;
-    int part_id;
+    string item_id;
     string custo_name;
     while (in_custo >> in1){
         in_custo >> action;
         in_custo >> timestamp;
         in_custo >> item_quantity;
-        in_custo >> part_id;
+        in_custo >> item_id;
         in_custo >> custo_name;
+        int part_id = stoi(item_id.substr(1));
         int custo_id = stoi(in1.substr(1));
-        if (in[0] != 'C' || custo_id <= 0){
+        cout << part_id << endl;
+        if (in1[0] != 'C' || custo_id <= 0){
             cerr << "Invalid customer information found for ID " << custo_id << " in the customer file." << endl;
             continue;
         }
+
         if (!check_customer(customers,custo_id)){
             customers.push_back(Customer(custo_id,custo_name));
         }
@@ -145,47 +152,59 @@ int main(int argc, char* argv[]){
             if (in_inventory(inventory,part_id)){
                 if (check_quantity(inventory,item_quantity,part_id)){
                     for (list<Inventory>::iterator it = inventory.begin(); it != inventory.begin(); it++){
+                        cout << it->getId() << endl;
                         if (it->getId() == part_id){
+                            cout << "true" << endl;
                             it->rentQuantity(item_quantity);
                             for (list<Customer>::iterator it1 = customers.begin(); it1 != customers.end(); it1++){
                                 if (it1->getId() == custo_id){
                                     Inventory temp(*it);
                                     temp.setQuantity(item_quantity);
                                     it1->add_item(temp);
+                                    cout << "true" << endl;
+                                    break;
                                 }
                             }
                             break;
                         }
                     }
                 } else {
-                    Customer temp(custo_id,custo_name);
-                    temp.setTime(timestamp);
-                    temp.setItemId(part_id);
-                    if (pending_customers.size() == 0){
-                        pending_customers.push_back(temp);
-                    } else {
-                        bool last = true;
-                        for (list<Customer>::iterator it = pending_customers.begin(); it != pending_customers.end(); it++){
-                            if (temp.getTimeStamp() < it->getTimeStamp()){
-                                last = false;
-                                pending_customers.insert(it, temp);
-                                break;
+                    for (list<Inventory>::iterator it = inventory.begin(); it != inventory.end(); it++){
+                        if (it->getId() == part_id){
+                            for (list<Customer>::iterator it1 = customers.begin(); it1 != customers.end(); it1++){
+                                if (it1->getId() == custo_id){
+                                    Inventory temp(*it);
+                                    temp.setQuantity(item_quantity);
+                                    it1-> add_pending(temp);
+                                    if (pending_customers.size() == 0){
+                                        pending_customers.push_back(&(*it1));
+                                    } else {
+                                        bool last = true;
+                                        for (list<Customer*>::iterator it2 = pending_customers.begin(); it2 != pending_customers.end(); it2++){
+                                            if (it1->getTimeStamp() < (*it2)->getTimeStamp()){
+                                                last = false;
+                                                pending_customers.insert(it2, (&(*it1)));
+                                                break;
+                                            }
+                                        }
+                                        if (last){
+                                            pending_customers.push_back(&(*it1));
+                                        }
+                                    }
+                                }
                             }
-                        }
-                        if (last){
-                            pending_customers.push_back(temp);
                         }
                     }
                 }
             }
-        }    
+       }
     }
-
     for (list<Customer>::iterator it = customers.begin(); it != customers.end(); it++){
-        out_custo << "C" << it->getId() << " " << it->getName() << endl;
-        for (list<Inventory>::iterator it1 = it->getItems().begin(); it1 != it->getItems().end(); it1++){
-            out_custo << "T" << it1->getId() << " " << it1->getQuantity() << " " << it1->getName() << endl;
-        }
+        cout << "C" << it->getId() << " " << it->getName() << endl;
+        // for (list<Inventory>::iterator it1 = it->getItems().begin(); it1 != it->getItems().end(); it1++){
+        //     cout << it1->getName() << " ";
+        // }
+        // cout << endl;
     }
     
     return 0;

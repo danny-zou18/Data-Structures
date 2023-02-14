@@ -10,7 +10,7 @@ Inventory::Inventory(int item_id, unsigned aQuantity, const string& item_name){
     quantity = aQuantity;
     name = item_name;
 }
-void setQuantity(int quantity){
+void Inventory::setQuantity(int quantity){
     quantity = quantity;
 }
 void Inventory::rentQuantity(int change){
@@ -18,10 +18,4 @@ void Inventory::rentQuantity(int change){
 }
 void Inventory::returnQuantity(int change){
     quantity += change;
-}
-void Inventory::addToRenting(const Customer& c){
-    renting_customers.push_back(c);
-}
-void Inventory::addToPending(const Customer& c){
-    pending_customers.push_back(c);
 }
