@@ -121,19 +121,19 @@ int main(int argc, char* argv[]){
 
     list<Customer> pending_customers;
 
-    string in;
+    string in1;
     string action;
     int timestamp;
     int item_quantity;
     int part_id;
     string custo_name;
-    while (in_custo >> in){
+    while (in_custo >> in1){
         in_custo >> action;
         in_custo >> timestamp;
         in_custo >> item_quantity;
         in_custo >> part_id;
         in_custo >> custo_name;
-        int custo_id = stoi(in.substr(1));
+        int custo_id = stoi(in1.substr(1));
         if (in[0] != 'C' || custo_id <= 0){
             cerr << "Invalid customer information found for ID " << custo_id << " in the customer file." << endl;
             continue;
@@ -164,10 +164,16 @@ int main(int argc, char* argv[]){
                     if (pending_customers.size() == 0){
                         pending_customers.push_back(temp);
                     } else {
+                        bool last = true;
                         for (list<Customer>::iterator it = pending_customers.begin(); it != pending_customers.end(); it++){
                             if (temp.getTimeStamp() < it->getTimeStamp()){
+                                last = false;
                                 pending_customers.insert(it, temp);
+                                break;
                             }
+                        }
+                        if (last){
+                            pending_customers.push_back(temp);
                         }
                     }
                 }
@@ -175,7 +181,12 @@ int main(int argc, char* argv[]){
         }    
     }
 
-
+    for (list<Customer>::iterator it = customers.begin(); it != customers.end(); it++){
+        out_custo << "C" << it->getId() << " " << it->getName() << endl;
+        for (list<Inventory>::iterator it1 = it->getItems().begin(); it1 != it->getItems().end(); it1++){
+            out_custo << "T" << it1->getId() << " " << it1->getQuantity() << " " << it1->getName() << endl;
+        }
+    }
     
     return 0;
 }

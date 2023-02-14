@@ -21,13 +21,17 @@ int main(){
         if (test_list.size() == 0){
             test_list.push_back(test[i]);
         } else {
+            bool last = true;
             for (list<int>::iterator it = test_list.begin(); it != test_list.end(); it++){
                 if (test[i] < *it){
                     test_list.insert(it, test[i]);
+                    last = false;
                     break;
                 }
             }
-            test_list.push_back(test[i]);
+            if (last){
+                test_list.push_back(test[i]);
+            }
         }
     }
     for (list<int>::iterator it = test_list.begin(); it != test_list.end(); it++){
