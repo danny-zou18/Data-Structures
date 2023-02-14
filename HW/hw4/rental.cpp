@@ -34,7 +34,34 @@ void sort_inventory(list<Inventory>& inventory){
         // }
     }
 }
-
+bool check_customer(list<Customer>& customers, int custo_id){
+    for (list<Customer>::iterator it = customers.begin(); it != customers.end(); it++){
+        if (it->getId() == custo_id){
+            return true;
+        }
+    }
+    return false;
+}
+bool in_inventory(list<Inventory>& inventory, int item_id){
+    for (list<Inventory>::iterator it = inventory.begin(); it != inventory.end(); it++){
+        if (it->getId() == item_id){
+            return true;
+        }
+    }
+    return false;
+}
+bool check_quantity(list<Inventory>& inventory, int quantity, int item_id){
+    for (list<Inventory>::iterator it = inventory.begin(); it != inventory.end(); it++){
+        if (it->getId() == item_id){
+            if (quantity <= it->getQuantity()){
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+    
+}
 
 int main(int argc, char* argv[]){
 
@@ -83,11 +110,13 @@ int main(int argc, char* argv[]){
 
     list<Customer> customers;
 
+    list<string> wait_list;
+
     string in;
     string action;
-    int timestamp;
+    string timestamp;
     int item_quantity;
-    string part_id;
+    int part_id;
     string custo_name;
     while (in_custo >> in){
         in_custo >> action;
@@ -100,11 +129,23 @@ int main(int argc, char* argv[]){
             cerr << "Invalid customer information found for ID " << custo_id << " in the customer file." << endl;
             continue;
         }
-
-
-
-
-
+        if (!check_customer(customers,custo_id)){
+            customers.push_back(Customer(custo_id,custo_name));
+        }
+        if (action == "rent"){
+            if (in_inventory(inventory,part_id)){
+                if (check_quantity(inventory,item_quantity,part_id)){
+                    for (list<Inventory>::iterator it = inventory.begin(); it != inventory.begin(); it++){
+                        if (it->getId() == part_id){
+                            it->changeQuantity(item_quantity);
+                            break;
+                        }
+                    }
+                } else {
+                    string combined = 
+                }
+            }
+        }    
     }
 
 
