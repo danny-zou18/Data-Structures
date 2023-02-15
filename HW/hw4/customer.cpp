@@ -2,6 +2,8 @@
 Customer::Customer(const Customer& c){
     id = c.getId();
     name = c.getName();
+    items = c.getItems();
+    pending_items = c.getPending();
     
 }
 Customer::Customer(int custo_id, const std::string& custo_name){

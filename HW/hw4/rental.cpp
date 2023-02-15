@@ -10,28 +10,32 @@ using std::cerr; using std::cout; using std::endl; using std::string; using std:
 //Function for sorting inventory list using insert and erase
 void sort_inventory(list<Inventory>& inventory){
     list<Inventory>::iterator it = inventory.begin();
-    list<Inventory>::iterator nextIt = it; nextIt++;
     for(it = inventory.begin(); it != inventory.end(); it++){
-        while (nextIt != inventory.end() && nextIt != it){
+        for (list<Inventory>::iterator nextIt = inventory.begin(); nextIt != it;){
             if (nextIt->getId() > it->getId()){
                 Inventory temp = *it;
                 inventory.erase(it);
-                inventory.insert(nextIt,temp);
+                inventory.insert(nextIt, temp);
                 break;
             } else {
                 nextIt++;
             }
         }
-        // for (list<Inventory>::iterator nextIt = inventory.begin(); nextIt != it;){
-        //     if (nextIt->getId() > it->getId()){
-        //         Inventory temp = *it;
-        //         inventory.erase(it);
-        //         inventory.insert(nextIt, temp);
-        //         break;
-        //     } else {
-        //         nextIt++;
-        //     }
-        // }
+    }
+}
+void sort_customers(list<Customer>& customers){
+    list<Customer>::iterator it = customers.begin();
+    for(it = customers.begin(); it != customers.end(); it++){
+        for (list<Customer>::iterator nextIt = customers.begin(); nextIt != it;){
+            if (nextIt->getId() > it->getId()){
+                Customer temp(*it);
+                customers.erase(it);
+                customers.insert(nextIt, temp);
+                break;
+            } else {
+                nextIt++;
+            }
+        }
     }
 }
 //Function that checks if a customer is already in the customers list
@@ -116,10 +120,6 @@ int main(int argc, char* argv[]){
 
     }
     sort_inventory(inventory); //Sort the inventory based on item id
-    for (list<Inventory>::iterator it = inventory.begin(); it != inventory.end(); it++){
-        cout << it->getId() << endl;
-    }
-    cout << endl;
 
     list<Customer> customers;
 
@@ -139,7 +139,6 @@ int main(int argc, char* argv[]){
         in_custo >> custo_name;
         int part_id = stoi(item_id.substr(1));
         int custo_id = stoi(in1.substr(1));
-        cout << part_id << endl;
         if (in1[0] != 'C' || custo_id <= 0){
             cerr << "Invalid customer information found for ID " << custo_id << " in the customer file." << endl;
             continue;
@@ -151,17 +150,14 @@ int main(int argc, char* argv[]){
         if (action == "rent"){
             if (in_inventory(inventory,part_id)){
                 if (check_quantity(inventory,item_quantity,part_id)){
-                    for (list<Inventory>::iterator it = inventory.begin(); it != inventory.begin(); it++){
-                        cout << it->getId() << endl;
+                    for (list<Inventory>::iterator it = inventory.begin(); it != inventory.end(); it++){
                         if (it->getId() == part_id){
-                            cout << "true" << endl;
                             it->rentQuantity(item_quantity);
                             for (list<Customer>::iterator it1 = customers.begin(); it1 != customers.end(); it1++){
                                 if (it1->getId() == custo_id){
                                     Inventory temp(*it);
                                     temp.setQuantity(item_quantity);
                                     it1->add_item(temp);
-                                    cout << "true" << endl;
                                     break;
                                 }
                             }
@@ -199,12 +195,20 @@ int main(int argc, char* argv[]){
             }
        }
     }
+    sort_customers(customers);
     for (list<Customer>::iterator it = customers.begin(); it != customers.end(); it++){
         cout << "C" << it->getId() << " " << it->getName() << endl;
-        // for (list<Inventory>::iterator it1 = it->getItems().begin(); it1 != it->getItems().end(); it1++){
-        //     cout << it1->getName() << " ";
-        // }
-        // cout << endl;
+        cout << it->getItems().size() << " ";
+        if (it->getItems().size() > 2){
+            for (list<Inventory>::iterator it1 = (it->getItems()).begin(); it1 != (it->getItems()).end(); it1++){
+                cout << it1->getName() << " ";
+            }
+        } else if (it->getItems().size() == 2) {
+            cout << it->getItems().front().getName() << " " << it->getItems().back().getName(); 
+        } else if (it->getItems().size() == 1){
+            cout << it->getItems().front().getName();
+        }
+        cout << endl;
     }
     
     return 0;
