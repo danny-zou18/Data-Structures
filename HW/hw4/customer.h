@@ -19,8 +19,8 @@ public:
     int getTimeStamp() const {return timeStamp;}
 
     //Modifiers
-    void add_item(const Inventory item);
-    void add_pending(const Inventory item);
+    void add_item(const Inventory& item);
+    void add_pending(const Inventory& item);
     void setTime(int time);
     void setItemId(int itemId);
 

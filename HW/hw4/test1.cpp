@@ -39,4 +39,21 @@ int main(){
     }
 
     return 0;
+
 }
+
+// bool check_rented(list<Customer>& customers, int part_id, int custo_id){
+//     for (list<Customer>::iterator it = customers.begin(); it != customers.end(); it++){
+//         if (it->getId() == custo_id){
+//             if (it->getItems().size() > 2){
+//             for (list<Inventory>::iterator it1 = it->getItems().begin(); it1 != it->getItems().end(); it1++){
+//                 if (it1->getId() == part_id){
+//                     return true;
+//                 }
+//             }
+//             }
+//             return false;
+//         }   
+//     }
+//     return false;
+// }
