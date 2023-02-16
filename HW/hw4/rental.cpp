@@ -8,34 +8,38 @@
 using std::cerr; using std::cout; using std::endl; using std::string; using std::list;
 
 //Function for sorting inventory list using insert and erase
-void sort_inventory(list<Inventory>& inventory){
-    list<Inventory>::iterator it = inventory.begin();
-    for(it = inventory.begin(); it != inventory.end(); it++){
-        for (list<Inventory>::iterator nextIt = inventory.begin(); nextIt != it;){
-            if (nextIt->getId() > it->getId()){
-                Inventory temp = *it;
-                inventory.erase(it);
-                inventory.insert(nextIt, temp);
+void sort_inventory(list<Inventory>& inventory, const Inventory& i){
+     if (inventory.size() == 0){
+        inventory.push_back(i);
+    } else {
+        bool last = true;
+        for (list<Inventory>::iterator it = inventory.begin(); it != inventory.end(); it++){
+            if (i.getId() < (it)->getId()){
+                last = false;
+                inventory.insert(it, i);
                 break;
-            } else {
-                nextIt++;
             }
+        }
+        if (last){
+            inventory.push_back(i);
         }
     }
 }
 //Function for sorting customers list using insert and erase
-void sort_customers(list<Customer>& customers){
-    list<Customer>::iterator it = customers.begin();
-    for(it = customers.begin(); it != customers.end(); it++){
-        for (list<Customer>::iterator nextIt = customers.begin(); nextIt != it;){
-            if (nextIt->getId() > it->getId()){
-                Customer temp(*it);
-                customers.erase(it);
-                customers.insert(nextIt, temp);
+void sort_customers(list<Customer>& customers, const Customer& c){
+    if (customers.size() == 0){
+        customers.push_back(c);
+    } else {
+        bool last = true;
+        for (list<Customer>::iterator it = customers.begin(); it != customers.end(); it++){
+            if (c.getId() < (it)->getId()){
+                last = false;
+                customers.insert(it, c);
                 break;
-            } else {
-                nextIt++;
             }
+        }
+        if (last){
+            customers.push_back(c);
         }
     }
 }
@@ -81,8 +85,8 @@ bool check_rented(list<Customer>& customers, int part_id, int custo_id){
         }
     }
     return false;
-    
 }
+
 
 int main(int argc, char* argv[]){
     //Checks if there are enough command line arguments
@@ -125,18 +129,15 @@ int main(int argc, char* argv[]){
         in_inven >> quantity;
         in_inven >> name;
         int item_id = stoi(in.substr(1));
-        if (in[0] != 'T' || item_id <= 0){
+        if (in[0] != 'T' || item_id <= 0 || quantity <= 0){
             cerr << "Invalid inventory ID " << item_id << " found in the inventory file." << endl;
             continue;
         }
         Inventory item(item_id,quantity,name);
-        inventory.push_back(item);
-
+        sort_inventory(inventory,item);
     }
-    sort_inventory(inventory); //Sort the inventory based on item id
 
     list<Customer> customers;
-
     list<Customer*> pending_customers;
 
     string in1;
@@ -157,9 +158,9 @@ int main(int argc, char* argv[]){
             cerr << "Invalid customer information found for ID " << custo_id << " in the customer file." << endl;
             continue;
         }
-
         if (!check_customer(customers,custo_id)){
-            customers.push_back(Customer(custo_id,custo_name));
+            Customer cus(custo_id, custo_name);
+            sort_customers(customers, cus);
         }
         if (action == "rent"){
             if (in_inventory(inventory,part_id)){
@@ -223,7 +224,7 @@ int main(int argc, char* argv[]){
                             if ((*it1)->getPending().size() > 0){
                                 if ((*it1)->check_pending(part_id)){
                                     if (check_quantity(inventory,item_quantity, part_id)){
-                                        Inventory temp(((*it1)->get_item(part_id)));
+                                        Inventory temp(((*it1)->get_pending_item(part_id)));
                                         (*it1)->add_item(temp);
                                         (*it1)->remove_pending();
                                         it1 = pending_customers.erase(it1);
@@ -239,25 +240,56 @@ int main(int argc, char* argv[]){
                         if (custo_id == it2->getId()){
                             it2->remove_item(part_id);
                             if (it2->getItems().size() == 0 && it2->getPending().size() == 0){
+                                
                                 it2 = customers.erase(it2);
                             }
                         }
                     }
+                } else {
+                    cerr << "Customer C" << std::setfill('0') << std::setw(4) << custo_id << " attempted to return item T"
+                    << std::setfill('0') << std::setw(4) << part_id << " which she/he did not rent." << endl;
                 }
+            } else {
+                cerr << "Customer C" << std::setfill('0') << std::setw(4) << custo_id << " requested item T" 
+                << std::setfill('0') << std::setw(4) << part_id << " which is not in the inventory." << endl;
             }
         }
     }
     
-    // sort_customers(customers);
-    // for (list<Customer>::iterator it = customers.begin(); it != customers.end(); it++){
-    //     if (it->getItems().size() == 0 && it->getPending().size() == 0){
-    //         it = customers.erase(it);
-    //     } else {
-    //         cout << *it;
-    //         cout << endl;
-    //     }
-    // }
-   
-    
+    for (list<Customer>::iterator it = customers.begin(); it != customers.end(); it++){
+        if (it->getItems().size() == 0 && it->getPending().size() == 0){
+            it = customers.erase(it);
+            it--;
+        } else {
+            out_custo << *it;
+            out_custo << endl;
+        }
+    }
+    for (list<Inventory>::iterator it = inventory.begin(); it != inventory.end(); it++){
+        int id = it->getId();
+        out_inven << "T" << std::setfill('0') << std::setw(4) << id << " " << it->getQuantity() 
+        << " available " << it->getName() << endl;
+        bool rented = false;
+        bool pending = false;
+        for (list<Customer>::iterator it1 = customers.begin(); it1 != customers.end();it1++){
+            if (it1->check_item(id)){
+                if (rented == false){
+                    out_inven << "Rentals Customers: ";
+                }
+                out_inven << "C" << std::setfill('0') << std::setw(4) << it1->getId() << " " << it1->getName() 
+                << " (" << it1->get_item(id).getQuantity() << ")" << endl;
+                rented = true;
+           }
+           if (it1->check_pending(id)){
+                if (pending == false){
+                    out_inven << "Pending Customers: ";
+                }
+                out_inven << "C" << std::setfill('0') << std::setw(4) << it1->getId() << " " << it1->getName() 
+                << " (" << it1->get_pending_item(id).getQuantity() << ")" << endl;
+                pending = true;
+           }
+        }
+        out_inven << endl;
+    }
     return 0;
 }

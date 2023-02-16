@@ -28,7 +28,15 @@ bool Customer::check_pending(int part_id) const {
     }
     return false;
 }
-Inventory Customer::get_item(int part_id) const{
+Inventory Customer::get_item(int part_id) const {
+    for (list<Inventory>::const_iterator it = items.begin(); it != items.end();it++){
+        if (it->getId() == part_id){
+            return (*it);
+        }
+    }
+    return items.front();
+}
+Inventory Customer::get_pending_item(int part_id) const{
     for (list<Inventory>::const_iterator it = pending_items.begin(); it != pending_items.end();it++){
         if (it->getId() == part_id){
             return (*it);

@@ -26,6 +26,7 @@ public:
     bool check_pending(int part_id) const;
 
     Inventory get_item(int part_id) const;
+    Inventory get_pending_item(int part_id) const;
 
     //Modifiers
     void add_item(const Inventory& item);
