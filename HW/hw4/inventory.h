@@ -7,7 +7,8 @@ using std::string; using std::list;
 class Customer;
 class Inventory{
 public:
-    Inventory(const Inventory& item);
+    //Constructors
+    Inventory(const Inventory& item); //Copy Constructor
     Inventory(int item_id, unsigned aQuantity, const string& item_name);
 
     //Accessors
@@ -26,14 +27,5 @@ private:
     int quantity;
     
 };
-
-
-
-
-
-
-
-
-
 
 #endif

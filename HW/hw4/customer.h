@@ -12,7 +12,7 @@ using std::list; using std::string;
 class Customer{
 public:
     //Constructors
-    Customer(const Customer& c);
+    Customer(const Customer& c); //Copy Customer
     Customer(int custo_id, const std::string& custo_name);
 
     //Accessors
@@ -32,12 +32,10 @@ public:
     void add_item(const Inventory& item);
     void add_pending(const Inventory& item);
     void setTime(int time);
-    void setItemId(int itemId);
     void remove_item(int part_id);
-    void remove_pending();
+    void remove_pending(int part_id);
 
     friend std::ostream& operator<< (std::ostream& out, const Customer& c);
-
 
 private:
     int id;
