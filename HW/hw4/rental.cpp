@@ -233,55 +233,57 @@ int main(int argc, char* argv[]){
        } else if (action == "return"){
             if (in_inventory(inventory, part_id)){
                 if (check_rented(customers, part_id, custo_id)){
-                    cout << "true" << endl;
                     for (list<Inventory>::iterator it = inventory.begin(); it != inventory.end(); it++){
                         if (it->getId() == part_id){
                             it->returnQuantity(item_quantity);
                         }
                         for (list<Customer*>::iterator it1 = pending_customers.begin(); it1 != pending_customers.end(); it1++){
-                            if ((*it1)->getPending().size() > 0){
-                                if ((*it1)->getPending().size() == 1){
-                                    if ((*it1)->getPending().front().getId() == part_id){
-                                        cout << "true" << endl;
-                                        if (check_quantity(inventory,item_quantity, part_id)){
-                                            cout << "true" << endl;
-                                            Inventory temp(((*it1)->getPending().front()));
-                                            (*it1)->add_item(temp);
-                                            (*it1)->getPending().pop_front();
-                                            if ((*it1)->getItems().size() == 0 && (*it1)->getItems().size() == 0){
-                                                for (list<Customer>::iterator it2 = customers.begin(); it2 != customers.end(); it2++){
-                                                    if (it2->getId() == (*it1)->getId()){
-                                                        customers.erase(it2);
-                                                    }
-                                                }
-                                            }
-                                            pending_customers.erase(it1);
-                                        } else {
-                                            continue;
-                                        }
+                            if ((*it1)->getPending().size() == 1){
+                                if ((*it1)->getPending().front().getId() == part_id){
+                                    if (check_quantity(inventory,item_quantity, part_id)){
+                                        Inventory temp(((*it1)->getPending().front()));
+                                        (*it1)->add_item(temp);
+                                        (*it1)->getPending().pop_front();
+                                        cout << (*it1)->getPending().size() << endl;
+                                            // for (list<Customer>::iterator it2 = customers.begin(); it2 != customers.end(); it2++){
+                                            //     if (it2->getId() == (*it1)->getId()){
+                                            //         cout << "1" << endl;
+                                            //         customers.erase(it2);
+                                            //         break;
+                                            //     }
+                                            // }
+                                        
+                                        it1 = pending_customers.erase(it1);
+                                    } else {
+                                        continue;
                                     }
-                                } 
+                                }
                             }
+                        
                         }
                     }
                 }
             }
         }
     }
-    // sort_customers(customers);
-    // for (list<Customer>::iterator it = customers.begin(); it != customers.end(); it++){
-    //     cout << "C" << it->getId() << " " << it->getName() << endl;
-    //     if (it->getItems().size() > 2){
-    //         for (list<Inventory>::iterator it1 = (it->getItems()).begin(); it1 != (it->getItems()).end(); it1++){
-    //             cout << it1->getId() << " ";
-    //         }
-    //     } else if (it->getItems().size() == 2) {
-    //         cout << it->getItems().front().getId() << " " << it->getItems().back().getId();
-    //     } else if (it->getItems().size() == 1){
-    //         cout << it->getItems().front().getId();
-    //     }
-    //     cout << endl;
-    // }
+    sort_customers(customers);
+    for (list<Customer>::iterator it = customers.begin(); it != customers.end(); it++){
+        cout << "C" << it->getId() << " " << it->getName() << endl;
+        if (it->getItems().size() > 2){
+            for (list<Inventory>::iterator it1 = (it->getItems()).begin(); it1 != (it->getItems()).end(); it1++){
+                cout << it1->getId() << " ";
+            }
+        } else if (it->getItems().size() == 2) {
+            cout << it->getItems().front().getId() << " " << it->getItems().back().getId();
+            
+        } else if (it->getItems().size() == 1){
+            cout << it->getItems().front().getId();
+        } else if (it->getPending().size() == 1){
+            cout << it->getPending().front().getId();
+        }
+
+        cout << endl;
+    }
    
     
     return 0;
