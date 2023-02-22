@@ -16,3 +16,14 @@
 // Implement these functions in "traincar.cpp"
 //
 
+void TotalWeightAndCountCars(TrainCar* train, int& total_weight, int& num_engines, int& num_freight_cars, int& num_passenger_cars, int& num_dining_cars, int& num_sleeping_cars);
+
+float CalculateSpeed(TrainCar* train);
+
+float AverageDistanceToDiningCar(TrainCar* train);
+
+int ClosestEngineToSleeperCar(TrainCar* train);
+
+void PushBack(TrainCar* &head, TrainCar* car);
+
+void DeleteAllCars(TrainCar*& head);

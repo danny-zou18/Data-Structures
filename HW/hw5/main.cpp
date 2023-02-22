@@ -19,7 +19,6 @@
 
 #include "traincar.h"
 
-
 // Testing Function Prototypes
 void SimpleTrainTest();
 void ShipFreightTests();
@@ -145,9 +144,9 @@ void PrintTrain(TrainCar* train) {
   PrintHelper(train, 3);
   PrintHelper(train, 4);
 
-  /*  
+  
   // UNCOMMENT THESE ADDITIONAL STATISTICS AS YOU WORK
-
+  
   int total_weight,num_engines,num_freight_cars,num_passenger_cars,num_dining_cars,num_sleeping_cars;
   TotalWeightAndCountCars(train,total_weight,num_engines,num_freight_cars,num_passenger_cars,num_dining_cars,num_sleeping_cars);
   int total_cars = num_engines+num_freight_cars+num_passenger_cars+num_dining_cars+num_sleeping_cars;
@@ -177,7 +176,7 @@ void PrintTrain(TrainCar* train) {
   }
 
   std::cout << std::endl;
-  */
+  
 }
 
 // =======================================================================
@@ -200,7 +199,7 @@ void SimpleTrainTest() {
   assert (simple->isEngine());
   assert (simple->prev == NULL);
   assert (simple->next->isPassengerCar());
-  assert (simple->next->prev->isEngine());
+  assert (simple->next->prev->isEngine()); //Somethings wrong here
   assert (simple->next->next->isPassengerCar());
   assert (simple->next->next->next->isDiningCar());
   assert (simple->next->next->next->next->isPassengerCar());
@@ -211,7 +210,6 @@ void SimpleTrainTest() {
   assert (simple->next->next->next->getID() == simple->next->next->getID()+1);
   assert (simple->next->next->next->next->getID() == simple->next->next->next->getID()+1);
   assert (simple->next->next->next->next->next->getID() == simple->next->next->next->next->getID()+1);
-
   // helper routine sanity check & print the results
   SanityCheck(simple);
   PrintTrain(simple);
