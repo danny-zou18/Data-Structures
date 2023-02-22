@@ -51,6 +51,7 @@ float CalculateSpeed(TrainCar* train){
         if (train->isEngine()){
             total_horsepower += 3000;
         }
+        train = train->next;
     }
     speed = (float(total_horsepower) * 550 * 3600) / ((20/.01) * 0.02 * 5280 * float(total_weight));
     return speed;
@@ -103,40 +104,41 @@ float AverageDistanceToDiningCar(TrainCar* train){
     return average;
 }
 int ClosestEngineToSleeperCar(TrainCar* train){
+    TrainCar* temp;
     int smallest_dist;
     while(train != nullptr){
         if (train->isSleepingCar()){
             int temp_val = 0;
             int tmp_front_dist = 0;
-            TrainCar* temp = train;
+            temp = train;
             while (temp != nullptr){
                 if (temp->isEngine()){
                     break;
+                }
+                if (temp->next == nullptr){
+                    tmp_front_dist = 32949;
                 }
                 tmp_front_dist += 1;
                 temp = temp->next;
             }
             int tmp_back_dist = 0;
-            TrainCar* temp1 = train;
-            while (temp1 != nullptr){
-                if (temp1->isEngine()){
+            temp = train;
+            while (temp != nullptr){
+                if (temp->isEngine()){
                     break;
                 }
+                if (temp->prev == nullptr){
+                    tmp_back_dist = 46463;
+                }
                 tmp_back_dist += 1;
-                temp1 = temp1->prev;
+                temp = temp->prev;
             }
-            
-            if (tmp_front_dist > tmp_back_dist){
-                temp_val = tmp_front_dist;
-            } else {
-                temp_val = tmp_back_dist;
-            }
-            if (train->prev == nullptr){
+
+            temp_val = std::min(tmp_front_dist,tmp_back_dist);
+            if (temp->prev == nullptr){
                 smallest_dist = temp_val;
             }
-            if (temp_val < smallest_dist){
-                smallest_dist = temp_val;
-            }
+            smallest_dist = std::min(smallest_dist,temp_val);
         }
         train = train->next;
     }
@@ -144,22 +146,21 @@ int ClosestEngineToSleeperCar(TrainCar* train){
 }
 void PushBack(TrainCar* &head, TrainCar* car){
     if (head == nullptr){
-        TrainCar* tmp = car;
-        tmp->next = nullptr;
-        tmp->prev = nullptr;
-        head = tmp;
+        head = car;
+        head->next = nullptr;
         return;
     } else {
+        if (head->next == nullptr){
+            car->prev = head;
+        }
         PushBack(head->next,car);
     }
 }
 void DeleteAllCars(TrainCar*& head){
-    TrainCar* current = head;
-    TrainCar* next = NULL;
-    while (current != NULL) {
-        next = current->next; 
-        delete current; 
-        current = next; 
+    if (head == nullptr){
+        delete head;
+    } else {
+        DeleteAllCars(head->next);
+        delete head;
     }
-    head = NULL; 
 }
