@@ -31,7 +31,7 @@ void StudentTests();
 
 int main() {
 
-  SimpleTrainTest();
+  //SimpleTrainTest();
   ShipFreightTests();
   //SeparateTests();
 
@@ -283,7 +283,7 @@ void ShipFreightHelper(MTRand_int32 &mtrand, int num_engines, int num_cars, int 
   for (unsigned int i = 0; i < trains.size(); i++) {
     DeleteAllCars(trains[i]);
   }
-  
+
 }
 
 
@@ -301,7 +301,7 @@ void ShipFreightTests() {
   
 
   // UNCOMMENT THIS FUNCTION WHEN THE FIXED SEED SHIP FREIGHT TEST LOOKS GOOD
-
+/*
   // Alternatively, we can let the seed be set from the computer
   // clock, so the number sequence will be different each time the
   // program is run.
@@ -311,7 +311,7 @@ void ShipFreightTests() {
     std::cout << "SHIP FREIGHT TEST, RANDOM SEED #" << i << std::endl;
     ShipFreightHelper(mtrand_autoseed,6,25,65,10);
   }
-  
+*/
 }
 
 

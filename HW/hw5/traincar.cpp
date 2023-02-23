@@ -57,6 +57,23 @@ float CalculateSpeed(TrainCar* train){
     speed = (float(total_horsepower) * 550 * 3600) / ((20/.01) * 0.02 * 5280 * float(total_weight));
     return speed;
 }
+float CalculateSpeedAdded(TrainCar* train, TrainCar* car){
+    float speed;
+    int total_horsepower = 0;
+    int total_weight = 0;
+    while (train!= nullptr){
+        total_weight += train->getWeight();
+        if (train->isEngine()){
+            total_horsepower += 3000;
+        }
+        train = train->next;
+    }
+    if (car != nullptr){
+        total_weight += car->getWeight();
+    }
+    speed = (float(total_horsepower) * 550 * 3600) / ((20/.01) * 0.02 * 5280 * float(total_weight));
+    return speed;
+}
 float AverageDistanceToDiningCar(TrainCar* train){
     float total_distance = 0;
     int num_passenger_cars = 0;
@@ -163,31 +180,24 @@ int count_engines(TrainCar* train){
     }
     return count;
 }
-void AddFront(TrainCar* &head, TrainCar* car){
-    if (car == nullptr){
-        return;
+TrainCar* PopFront(TrainCar*& train) {
+    TrainCar* ptr = train;
+    if (train == nullptr) {
+        return nullptr;
     }
-    if (head == nullptr){
-        head = car;
-        head->prev = nullptr;
-        head->next = nullptr;
-        return;
-    } else {
-        if (head->prev == nullptr){
-            car->next = head;
-        }
-        AddFront(head->prev,car);
+    else if (train->next == nullptr) {
+        train = nullptr;
+        return ptr;
     }
+    train = train->next;
+    train->prev = nullptr;
+    ptr->next = nullptr;
+    return ptr;
 }
-
 void PushBack(TrainCar* &head, TrainCar* car){
-    if (car == nullptr){
-        return;
-    }
     if (head == nullptr){
         head = car;
         head->next = nullptr;
-        head->prev = nullptr;
         return;
     } else {
         if (head->next == nullptr){
@@ -196,99 +206,92 @@ void PushBack(TrainCar* &head, TrainCar* car){
         PushBack(head->next,car);
     }
 }
-TrainCar* RemoveFront(TrainCar*& train){
-    if (train == nullptr){
-        return nullptr;
-    }
-    if (train->next == nullptr){
-        train = nullptr;
-        TrainCar* temp = train;
-        return temp;
-    }
-    TrainCar* temp = train;
-    train = train->next;
-    train->prev = nullptr;
-    temp->next = nullptr;
-    return temp;
-}
-TrainCar* RemoveBack(TrainCar*& train){
-    if (train == nullptr){
-        return nullptr;
-    }
-    if (train->next == nullptr){
-        train = nullptr;
-        TrainCar* temp = train;
-        return temp;
-    }
-    TrainCar* temp = train;
-    while (temp->next != nullptr){
-        temp = temp->next;
-    }
-    temp->prev->next = nullptr;
-    temp->prev = nullptr;
-    return temp;
-}
-TrainCar* Erase(TrainCar*& train, TrainCar*& ptr) {
-    // Do nothing if train is empty
-    if (train == NULL || ptr == NULL) return NULL;
-    TrainCar *tmp = ptr;
-    // If there is only 1 elements in train, train would become empty and
-    // ptr is supposed to set to NULL.
-    if (ptr->prev == NULL && ptr->next == NULL) {
-        train = NULL;
-    } else if (ptr->next == NULL) {
-        ptr->prev->next = NULL;
-    } // Tail
-    else if (ptr->prev == NULL) {
-        // Head: Modify 1 pointer and set train and ptr to new head.
-        ptr->next->prev = NULL;
-        train = train->next;
-    } else {
-        // If ptr is not head nor tail of list, we are going to modify 2 pointers
-        ptr->next->prev = ptr->prev;
-        ptr->prev->next = ptr->next;
-    }
-    ptr = ptr->next;
-    // Make sure tmp is not connect to anything so that no unexpectted things
-    // would happen.
-    tmp->prev = NULL;
-    tmp->next = NULL;
-    return tmp;
-}
-void DeleteAllCars(TrainCar*& head){
-    if (head == nullptr){
-        delete head;
-    } else {
-        DeleteAllCars(head->next);
-        delete head;
+void AddCarBack(TrainCar *& train, TrainCar *& car) {
+    if (car != NULL) {
+    
+        if (train == NULL) {
+            train = car;
+            train->next = NULL;
+            train->prev = NULL;
+            
+        } else {
+            TrainCar* nxt = car->next;   
+            PushBack(train, car);
+            
+            if (nxt != NULL) {
+                nxt->prev = NULL;
+                car = nxt;
+                
+            } else {car = NULL;}
+        }
     }
 }
-
-std::vector<TrainCar*> ShipFreight(TrainCar*& engines, TrainCar*& freights, int min_speed, int max_cars){
-    std::vector<TrainCar*> trains;
-    while (engines != nullptr && freights != nullptr){
-        TrainCar* new_train = nullptr;
-        PushBack(new_train, RemoveFront(engines));
-        int current_cars = 1;
+void AddCarFront(TrainCar *& train, TrainCar *& car) {
+    if (car != NULL) {
+    
+        TrainCar* nxt = car->next;
         
-        TrainCar* check = freights;
-        while (check != nullptr && current_cars < max_cars){
-            TrainCar* temp = new_train;
-            PushBack(temp,check);
-            if (CalculateSpeed(temp) >= min_speed){
-                current_cars += 1;
-                PushBack(new_train,Erase(freights,check));
-            } else if (max_cars - current_cars >= 2 && engines != nullptr){
-                AddFront(new_train, RemoveFront(engines));
-                PushBack(new_train, Erase(freights, check));
-                current_cars += 2;
+        // If this is the first node, then we need to do things a bit differently
+        if (train == NULL) {
+            train = car;
+            train->next = NULL;
+            train->prev = NULL;
+            
+        } else {
+            TrainCar* second = train;     // used to be the first car in the train, now it will be the second
+            train = car;
+            train->prev = NULL;
+            train->next = second;
+            
+            if (second != NULL) {
+                second->prev = train;
+            }
+        }
+        
+          // next car after the first one (which will be taken out)
+        if (nxt != NULL) {
+            nxt->prev = NULL;
+            car = nxt;
+            
+        } else {car = NULL;}
+    }
+}
+void DeleteAllCars(TrainCar*& train) {
+    if (train == NULL) return;
+    TrainCar *ptr = train;
+    while (ptr->next != NULL) {
+        ptr = ptr->next;
+        delete ptr->prev;
+    }
+    delete ptr;
+    train = NULL;
+}
+std::vector<TrainCar*> ShipFreight(TrainCar* engines, TrainCar* freights, const int min_speed, const int max_cars){
+    std::vector<TrainCar*> trains;
+
+    while (engines != nullptr && freights != nullptr){
+        TrainCar* current_train = nullptr;
+        PushBack(current_train, PopFront(engines));
+
+        int current_cars = count_cars(current_train);
+        float current_speed = CalculateSpeed(current_train);
+
+        while (current_speed > min_speed && current_cars < max_cars){
+            if (CalculateSpeedAdded(current_train, freights) > min_speed){
+                AddCarBack(current_train, freights);
+                current_cars = count_cars(current_train);
+                current_speed = CalculateSpeed(current_train);
+            } else if (max_cars - current_cars >=  2 && engines != nullptr){
+                AddCarFront(current_train, engines);
+                AddCarBack(current_train, freights);
+                current_cars = count_cars(current_train);
+                current_speed = CalculateSpeed(current_train);
             } else {
                 break;
             }
-            check = check->next;
-
         }
-    trains.push_back(new_train);
+        trains.push_back(current_train);
+        
     }
     return trains;
 }

@@ -20,6 +20,8 @@ void TotalWeightAndCountCars(TrainCar* train, int& total_weight, int& num_engine
 
 float CalculateSpeed(TrainCar* train);
 
+float CalculateSpeedAdded(TrainCar* train, TrainCar* car);
+
 float AverageDistanceToDiningCar(TrainCar* train);
 
 int ClosestEngineToSleeperCar(TrainCar* train);
@@ -28,16 +30,14 @@ int count_cars(TrainCar* train);
 
 int count_engines(TrainCar* train);
 
-void AddFront(TrainCar* &head, TrainCar* car);
+TrainCar* PopFront(TrainCar*& train);
 
 void PushBack(TrainCar* &head, TrainCar* car);
 
-TrainCar* RemoveFront(TrainCar*& train);
-   
-TrainCar* RemoveBack(TrainCar*& train);
+void AddCarBack(TrainCar *& train, TrainCar *& car);
 
-TrainCar* Erase(TrainCar*& train, TrainCar*& ptr);
+void AddCarFront(TrainCar *& train, TrainCar *& car);
 
 void DeleteAllCars(TrainCar*& head);
 
-std::vector<TrainCar*> ShipFreight(TrainCar*& engines, TrainCar*& freights, int min_speed, int max_cars);
+std::vector<TrainCar*> ShipFreight(TrainCar* engines, TrainCar* freights, const int min_speed, const int max_cars);
