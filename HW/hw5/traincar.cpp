@@ -10,6 +10,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdlib>
+#include <vector>
 
 #include "traincar.h"
 
@@ -178,7 +179,7 @@ void AddFront(TrainCar* &head, TrainCar* car){
 void PushBack(TrainCar* &head, TrainCar* car){
     if (head == nullptr){
         head = car;
-        head->next = nullptr;
+        //head->next = nullptr;
         return;
     } else {
         if (head->next == nullptr){
@@ -272,14 +273,11 @@ std::vector<TrainCar*> ShipFreight(TrainCar*& engines, TrainCar*& freights, int 
             } else if (max_cars - current_cars >= 2 && engines != nullptr){
                 AddFront(new_train, RemoveFront(engines));
                 PushBack(new_train, Erase(freights, check));
-                //std::cout << check->getID() << std::endl;
-
-
                 current_cars += 2;
             } else {
                 break;
             }
-            //check = check->next;
+            check = check->next;
 
         }
     trains.push_back(new_train);

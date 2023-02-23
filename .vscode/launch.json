@@ -4,9 +4,9 @@
       "type": "lldb",
       "request": "launch",
       "name": "Launch",
-      "program": "${workspaceFolder}/roads.exe",
+      "program": "${workspaceFolder}/HW/hw5/a.out",
       "args": ["-arg1", "-arg2"],
-      "cwd": "${workspaceFolder}"
+      "cwd": "${workspaceFolder}/HW/hw5"
     }
   ]
 }
