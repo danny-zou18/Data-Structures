@@ -164,9 +164,13 @@ int count_engines(TrainCar* train){
     return count;
 }
 void AddFront(TrainCar* &head, TrainCar* car){
+    if (car == nullptr){
+        return;
+    }
     if (head == nullptr){
         head = car;
         head->prev = nullptr;
+        head->next = nullptr;
         return;
     } else {
         if (head->prev == nullptr){
@@ -177,9 +181,13 @@ void AddFront(TrainCar* &head, TrainCar* car){
 }
 
 void PushBack(TrainCar* &head, TrainCar* car){
+    if (car == nullptr){
+        return;
+    }
     if (head == nullptr){
         head = car;
-        //head->next = nullptr;
+        head->next = nullptr;
+        head->prev = nullptr;
         return;
     } else {
         if (head->next == nullptr){
