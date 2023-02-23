@@ -32,7 +32,7 @@ void StudentTests();
 int main() {
 
   SimpleTrainTest();
-  //ShipFreightTests();
+  ShipFreightTests();
   //SeparateTests();
 
   StudentTests();
@@ -225,8 +225,8 @@ void SimpleTrainTest() {
 // the freight car weights
 void ShipFreightHelper(MTRand_int32 &mtrand, int num_engines, int num_cars, int min_speed, int max_cars_per_train) {
 
-  /*
-
+  
+  
   // UNCOMMENT THIS FUNCTION WHEN YOU'RE READY TO TEST SHIP FREIGHT
 
   // create a chain with specified # of engines engines
@@ -283,7 +283,7 @@ void ShipFreightHelper(MTRand_int32 &mtrand, int num_engines, int num_cars, int 
   for (unsigned int i = 0; i < trains.size(); i++) {
     DeleteAllCars(trains[i]);
   }
-  */
+  
 }
 
 
@@ -298,7 +298,7 @@ void ShipFreightTests() {
   std::cout << "SHIP FREIGHT TEST, FIXED SEED" << std::endl;
   ShipFreightHelper(mtrand_fixed_seed,10,25,60,12);
 
-  /*
+  
 
   // UNCOMMENT THIS FUNCTION WHEN THE FIXED SEED SHIP FREIGHT TEST LOOKS GOOD
 
@@ -311,7 +311,7 @@ void ShipFreightTests() {
     std::cout << "SHIP FREIGHT TEST, RANDOM SEED #" << i << std::endl;
     ShipFreightHelper(mtrand_autoseed,6,25,65,10);
   }
-  */
+  
 }
 
 

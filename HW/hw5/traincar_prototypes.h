@@ -24,6 +24,20 @@ float AverageDistanceToDiningCar(TrainCar* train);
 
 int ClosestEngineToSleeperCar(TrainCar* train);
 
+int count_cars(TrainCar* train);
+
+int count_engines(TrainCar* train);
+
+void AddFront(TrainCar* &head, TrainCar* car);
+
 void PushBack(TrainCar* &head, TrainCar* car);
 
+TrainCar* RemoveFront(TrainCar*& train);
+   
+TrainCar* RemoveBack(TrainCar*& train);
+
+TrainCar* Erase(TrainCar*& train, TrainCar*& ptr);
+
 void DeleteAllCars(TrainCar*& head);
+
+std::vector<TrainCar*> ShipFreight(TrainCar*& engines, TrainCar*& freights, int min_speed, int max_cars);
