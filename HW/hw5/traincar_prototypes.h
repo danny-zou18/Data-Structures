@@ -30,14 +30,18 @@ int count_cars(TrainCar* train);
 
 int count_engines(TrainCar* train);
 
-TrainCar* PopFront(TrainCar*& train);
-
-void PushBack(TrainCar* &head, TrainCar* car);
+void PushBack(TrainCar* &train, TrainCar* car);
 
 void AddCarBack(TrainCar *& train, TrainCar *& car);
 
 void AddCarFront(TrainCar *& train, TrainCar *& car);
 
-void DeleteAllCars(TrainCar*& head);
+TrainCar* getTrain(TrainCar*& train, int index);
+
+void swapCars(TrainCar*& train1, TrainCar* train2, TrainCar* train3);
+
+void DeleteAllCars(TrainCar*& train);
 
 std::vector<TrainCar*> ShipFreight(TrainCar*& engines, TrainCar*& freights, const int min_speed, const int max_cars);
+
+void Separate(TrainCar*& train1, TrainCar*& train2, TrainCar*& train3);
