@@ -382,7 +382,6 @@ void swapCars(TrainCar*& train, TrainCar* car1, TrainCar* car2) {
     if (car1 == nullptr || car2 == nullptr) {
         return;
     }
-    
     if (car1 == car2) {
         return;
     }
