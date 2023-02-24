@@ -40,4 +40,4 @@ void AddCarFront(TrainCar *& train, TrainCar *& car);
 
 void DeleteAllCars(TrainCar*& head);
 
-std::vector<TrainCar*> ShipFreight(TrainCar* engines, TrainCar* freights, const int min_speed, const int max_cars);
+std::vector<TrainCar*> ShipFreight(TrainCar*& engines, TrainCar*& freights, const int min_speed, const int max_cars);

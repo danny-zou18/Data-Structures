@@ -181,18 +181,18 @@ int count_engines(TrainCar* train){
     return count;
 }
 TrainCar* PopFront(TrainCar*& train) {
-    TrainCar* ptr = train;
+    TrainCar* temp = train;
     if (train == nullptr) {
         return nullptr;
     }
     else if (train->next == nullptr) {
         train = nullptr;
-        return ptr;
+        return temp;
     }
     train = train->next;
     train->prev = nullptr;
-    ptr->next = nullptr;
-    return ptr;
+    temp->next = nullptr;
+    return temp;
 }
 void PushBack(TrainCar* &head, TrainCar* car){
     if (head == nullptr){
@@ -208,7 +208,6 @@ void PushBack(TrainCar* &head, TrainCar* car){
 }
 void AddCarBack(TrainCar *& train, TrainCar *& car) {
     if (car != NULL) {
-    
         if (train == NULL) {
             train = car;
             train->next = NULL;
@@ -217,12 +216,12 @@ void AddCarBack(TrainCar *& train, TrainCar *& car) {
         } else {
             TrainCar* nxt = car->next;   
             PushBack(train, car);
-            
             if (nxt != NULL) {
                 nxt->prev = NULL;
                 car = nxt;
-                
-            } else {car = NULL;}
+            } else {
+                car = NULL;
+            }
         }
     }
 }
@@ -242,17 +241,14 @@ void AddCarFront(TrainCar *& train, TrainCar *& car) {
             train = car;
             train->prev = NULL;
             train->next = second;
-            
             if (second != NULL) {
                 second->prev = train;
             }
         }
-        
           // next car after the first one (which will be taken out)
         if (nxt != NULL) {
             nxt->prev = NULL;
             car = nxt;
-            
         } else {car = NULL;}
     }
 }
@@ -266,7 +262,7 @@ void DeleteAllCars(TrainCar*& train) {
     delete ptr;
     train = NULL;
 }
-std::vector<TrainCar*> ShipFreight(TrainCar* engines, TrainCar* freights, const int min_speed, const int max_cars){
+std::vector<TrainCar*> ShipFreight(TrainCar*& engines, TrainCar*& freights, const int min_speed, const int max_cars){
     std::vector<TrainCar*> trains;
 
     while (engines != nullptr && freights != nullptr){
@@ -275,23 +271,20 @@ std::vector<TrainCar*> ShipFreight(TrainCar* engines, TrainCar* freights, const 
 
         int current_cars = count_cars(current_train);
         float current_speed = CalculateSpeed(current_train);
-
-        while (current_speed > min_speed && current_cars < max_cars){
+        
+        while (current_speed > min_speed && current_cars < max_cars && freights != nullptr && engines != nullptr){
             if (CalculateSpeedAdded(current_train, freights) > min_speed){
                 AddCarBack(current_train, freights);
-                current_cars = count_cars(current_train);
-                current_speed = CalculateSpeed(current_train);
             } else if (max_cars - current_cars >=  2 && engines != nullptr){
                 AddCarFront(current_train, engines);
                 AddCarBack(current_train, freights);
-                current_cars = count_cars(current_train);
-                current_speed = CalculateSpeed(current_train);
             } else {
                 break;
             }
+            current_cars = count_cars(current_train);
+            current_speed = CalculateSpeed(current_train);
         }
         trains.push_back(current_train);
-        
     }
     return trains;
 }
