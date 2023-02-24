@@ -302,7 +302,6 @@ void PushBack(TrainCar* &train, TrainCar* car){
             car->prev = train;
         }
         PushBack(train->next,car);
-        
     }
 }
 void AddCarBack(TrainCar *& train, TrainCar *& car) {
@@ -352,6 +351,23 @@ void AddCarFront(TrainCar *& train, TrainCar *& car) {
             car = NULL;
         }
     }
+}
+TrainCar* PopFront(TrainCar*& train) {
+    TrainCar* ptr = train;
+    // If list is empty, do nothing and return a NULL pointer
+    if (train == NULL) return NULL;
+    else if (train->next == NULL) {
+        // If there is only 1 element in list, no need to modify prev and next
+        // pointers.
+        train = NULL;
+        return ptr;
+    }
+    // Otherwise, move pointer to next element
+    train = train->next;
+    // Modify 2 pointers so that the second element become new head
+    train->prev = NULL;
+    ptr->next = NULL;
+    return ptr;
 }
 TrainCar* getTrain(TrainCar*& train, int index){
     TrainCar* current_car = train;
@@ -572,14 +588,10 @@ void Separate(TrainCar*& train1, TrainCar*& train2, TrainCar*& train3){
     }
     TrainCar* temp1 = train1;
     for (unsigned int i = 0; i < first_length; i++){
-        PrintTrain(temp1);
-        PushBack(train2, temp1);
-        
-        temp1 = temp1->next;
+        PushBack(train2, PopFront(temp1));
     }
     for (unsigned int i = 0; i < second_length; i++){
-        PushBack(train3,temp1);
-        temp1 = temp1->next;
+        PushBack(train3, PopFront(temp1));
     }
     train1 = nullptr;
 }

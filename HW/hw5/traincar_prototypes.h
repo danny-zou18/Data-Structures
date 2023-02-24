@@ -36,6 +36,8 @@ void AddCarBack(TrainCar *& train, TrainCar *& car);
 
 void AddCarFront(TrainCar *& train, TrainCar *& car);
 
+TrainCar* PopFront(TrainCar*& train);
+
 TrainCar* getTrain(TrainCar*& train, int index);
 
 void swapCars(TrainCar*& train1, TrainCar* train2, TrainCar* train3);

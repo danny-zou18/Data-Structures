@@ -486,6 +486,7 @@ void SeparateTests() {
   PushBack(t, TrainCar::MakePassengerCar());
   PushBack(t, TrainCar::MakeDiningCar());
   PushBack(t, TrainCar::MakePassengerCar());
+
   SeparateTestHelper(t, "#1");
 
   t = NULL;  
