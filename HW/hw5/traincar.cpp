@@ -266,6 +266,7 @@ int ClosestEngineToSleeperCar(TrainCar* train){
                 }
                 tmp_back_dist += 1;
                 temp = temp->prev;
+                
             }
 
             temp_val = std::min(tmp_front_dist,tmp_back_dist);
@@ -383,59 +384,32 @@ TrainCar* getTrain(TrainCar*& train, int index){
     return current_car;
 }
 void swapCars(TrainCar*& train, TrainCar* car1, TrainCar* car2) {
-    if (car1 == nullptr || car2 == nullptr) {
-        return;
+    TrainCar* temp = car1;
+    TrainCar* temp2 = car2;
+    TrainCar* previousCar = temp->prev;
+    TrainCar* nextCar = temp->next;
+    TrainCar* previousCar2 = temp2->prev;
+    TrainCar* nextCar2 = temp2->next;
+
+    if (nextCar != nullptr){
+        nextCar->prev = temp2;
     }
-    if (car1 == car2) {
-        return;
-    }
-    if (car1->prev == nullptr) {
-        train = car2;
-    }
-    if (car2->next == nullptr) {
-        car2->prev->next = car1;
-    }
-    if (car1->next == car2) {
-        TrainCar* tmp = car2->next;
-        car2->next = car1;
-        car1->prev = car2;
-        car1->next = tmp;
-        tmp->prev = car1;
-        car2->prev = nullptr;
-        return;
+    if (nextCar != nullptr){
+        previousCar->next = temp2;
     }
     
-    if (car2->prev == car1) {
-        TrainCar* tmp = car1->prev;
-        car1->prev = car2;
-        car2->next = car1;
-        car2->prev = tmp;
-        tmp->next = car2;
-        car1->next = nullptr;
-        return;
+    if (temp2->next != nullptr){
+        temp2->next->prev = temp;
     }
-    
-    TrainCar* tmp1 = car1->prev;
-    TrainCar* tmp2 = car2->prev;
-    
-    car1->prev = tmp2;
-    car1->next = car2->next;
-    car2->prev = tmp1;
-    car2->next = car1->next;
-    
-    if (car1->next != nullptr) {
-        car1->next->prev = car1;
+    if (temp2->prev != nullptr){
+        temp2->prev->next = temp;
     }
-    if (car2->next != nullptr) {
-        car2->next->prev = car2;
-    }
-    
-    if (tmp1 != nullptr) {
-        tmp1->next = car2;
-    }
-    if (tmp2 != nullptr) {
-        tmp2->next = car1;
-    }
+    temp->next = temp2->next;
+    temp->prev = temp2->prev;
+
+    temp2->next = nextCar;
+    temp2->prev = previousCar;
+
 }
 
 void DeleteAllCars(TrainCar*& train) {
@@ -546,26 +520,34 @@ void Separate(TrainCar*& train1, TrainCar*& train2, TrainCar*& train3){
         int second_engine_pos;
         TrainCar* temp = train1;
         bool did = false;
+        int track_pos = first_length;
         while (track < move_engines){
             for ( ;first_engine_pos < first_length; first_engine_pos++ ){
+                if (temp->isEngine() && track_pos == first_length){
+                    temp = temp->next;
+                    track_pos--;
+                    continue;
+                }
                 if (temp->isEngine()){
-                    second_engine_pos = first_engine_pos + first_length;
+                    second_engine_pos = first_engine_pos + track_pos;
                     TrainCar* first_swap = getTrain(train1, first_engine_pos);
                     TrainCar* second_swap = getTrain(train1, second_engine_pos);
-                    // if (did == false){
-                    //     PrintTrain(train1);
-                    // }
+                    if (second_swap->isEngine()){
+                        temp = temp->next;
+                        track_pos--;
+                        if (track == move_engines){
+                            break;
+                        }
+                        continue;
+                    }
                     swapCars(train1, first_swap, second_swap);
-                    // if (did == false){
-                    //     PrintTrain(train1);
-                    // }
                     track += 1;
                     if (track == move_engines){
                         break;
                     }
-                    //did = true;
                 }
                 temp = temp->next;
+                track_pos--;
             }
         }
     } else if (engines_in_second > second_engines){
@@ -578,23 +560,34 @@ void Separate(TrainCar*& train1, TrainCar*& train2, TrainCar*& train3){
         for (unsigned int i = 0; i < first_length;i++){
             temp = temp->next;
         }
-
+        int track_pos = 1;
         while (track < move_engines){
             for ( ;first_engine_pos < first_length + second_length; first_engine_pos++){
+                if (temp->isEngine() && track_pos == 1){
+                    temp = temp->next;
+                    track_pos++;
+                    continue;
+                }
                 if (temp->isEngine()){
-                    second_engine_pos = first_engine_pos - first_length;
+                    second_engine_pos = first_engine_pos - track_pos;
                     TrainCar* first_swap = getTrain(train1, first_engine_pos);
                     TrainCar* second_swap = getTrain(train1, second_engine_pos);
-                    std::cout << first_swap->getID() << "  " << second_swap->getID() << std::endl;
+                    if (second_swap->isEngine()){
+                        temp = temp->next;
+                        track_pos++;
+                        if (track == move_engines){
+                            break;
+                        }
+                        continue;
+                    }
                     swapCars(train1, first_swap, second_swap);
                     track += 1;
                     if (track == move_engines){
                         break;
                     }
-                   
-
                 }
                 temp = temp->next;
+                track_pos++;
             }
         }
     }
