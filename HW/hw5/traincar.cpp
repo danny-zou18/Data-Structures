@@ -1,3 +1,5 @@
+
+
 // =======================================================================
 //
 // IMPORTANT NOTE: You should edit this file
@@ -247,6 +249,7 @@ int ClosestEngineToSleeperCar(TrainCar* train){
                 }
                 if (temp->next == nullptr){
                     tmp_front_dist = 32949;
+                    break;
                 }
                 tmp_front_dist += 1;
                 temp = temp->next;
@@ -259,6 +262,7 @@ int ClosestEngineToSleeperCar(TrainCar* train){
                 }
                 if (temp->prev == nullptr){
                     tmp_back_dist = 46463;
+                    break;
                 }
                 tmp_back_dist += 1;
                 temp = temp->prev;
@@ -513,22 +517,24 @@ void Separate(TrainCar*& train1, TrainCar*& train2, TrainCar*& train3){
         first_engines = engine_cars / 2;
         second_engines = (engine_cars / 2) + 1;
     }
-
     int engines_in_first = 0; //The amount of engines that is in the first half of the original train
     int engines_in_second = 0; //The amount of engines that is in the second half of the original train
     TrainCar* ptr = train1;
     //Calculates the amount of engines
-    for (unsigned int i = 0; i < first_engines; i++){
+    for (unsigned int i = 0; i < first_length; i++){
         if (ptr->isEngine()){
             engines_in_first += 1;
         }
         ptr = ptr->next;
     }
-    for (unsigned int i = 0; i < second_length; i++){
+    
+    for (unsigned int i = first_length; i < second_length + first_length; i++){
         if (ptr->isEngine()){
             engines_in_second += 1;
         }
+        ptr = ptr->next;
     }
+
     int move_engines;
     int track;
 
@@ -546,18 +552,18 @@ void Separate(TrainCar*& train1, TrainCar*& train2, TrainCar*& train3){
                     second_engine_pos = first_engine_pos + first_length;
                     TrainCar* first_swap = getTrain(train1, first_engine_pos);
                     TrainCar* second_swap = getTrain(train1, second_engine_pos);
-                    if (did == false){
-                        PrintTrain(train1);
-                    }
+                    // if (did == false){
+                    //     PrintTrain(train1);
+                    // }
                     swapCars(train1, first_swap, second_swap);
-                    if (did == false){
-                        PrintTrain(train1);
-                    }
+                    // if (did == false){
+                    //     PrintTrain(train1);
+                    // }
                     track += 1;
                     if (track == move_engines){
                         break;
                     }
-                    did = true;
+                    //did = true;
                 }
                 temp = temp->next;
             }
@@ -569,17 +575,24 @@ void Separate(TrainCar*& train1, TrainCar*& train2, TrainCar*& train3){
         int first_engine_pos = first_length;
         int second_engine_pos;
         TrainCar* temp = train1;
+        for (unsigned int i = 0; i < first_length;i++){
+            temp = temp->next;
+        }
+
         while (track < move_engines){
             for ( ;first_engine_pos < first_length + second_length; first_engine_pos++){
                 if (temp->isEngine()){
                     second_engine_pos = first_engine_pos - first_length;
                     TrainCar* first_swap = getTrain(train1, first_engine_pos);
                     TrainCar* second_swap = getTrain(train1, second_engine_pos);
+                    std::cout << first_swap->getID() << "  " << second_swap->getID() << std::endl;
                     swapCars(train1, first_swap, second_swap);
                     track += 1;
                     if (track == move_engines){
                         break;
                     }
+                   
+
                 }
                 temp = temp->next;
             }
