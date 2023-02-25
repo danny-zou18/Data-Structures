@@ -28,8 +28,6 @@ int ClosestEngineToSleeperCar(TrainCar* train);
 
 int count_cars(TrainCar* train);
 
-int count_engines(TrainCar* train);
-
 void PushBack(TrainCar* &train, TrainCar* car);
 
 void AddCarBack(TrainCar *& train, TrainCar *& car);
@@ -40,7 +38,7 @@ TrainCar* PopFront(TrainCar*& train);
 
 TrainCar* getTrain(TrainCar*& train, int index);
 
-void swapCars(TrainCar*& train1, TrainCar* train2, TrainCar* train3);
+void moveCar(TrainCar*& Train, TrainCar* car, int index);
 
 void DeleteAllCars(TrainCar*& train);
 

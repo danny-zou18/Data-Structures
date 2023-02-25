@@ -23,7 +23,8 @@
 //  THE "traincar_prototypes.h" FILE.
 //
 
-  
+//Function for calculating the total weight of the train and how many engines, freights cars, passengers cars, 
+//dining cars and sleeping cars the train has
 void TotalWeightAndCountCars(TrainCar* train, int& total_weight, int& num_engines, int& num_freight_cars, int& num_passenger_cars, int& num_dining_cars, int& num_sleeping_cars){
     total_weight = 0;
     num_engines = 0;
@@ -47,6 +48,7 @@ void TotalWeightAndCountCars(TrainCar* train, int& total_weight, int& num_engine
         train = train->next;
     }
 }
+//Function that calculates the speed of the train based on the given formula
 float CalculateSpeed(TrainCar* train){
     float speed;
     int total_horsepower = 0;
@@ -61,6 +63,7 @@ float CalculateSpeed(TrainCar* train){
     speed = (float(total_horsepower) * 550 * 3600) / ((20/.01) * 0.02 * 5280 * float(total_weight));
     return speed;
 }
+//Function that calculates the speed of the train if we add the given car to the train
 float CalculateSpeedAdded(TrainCar* train, TrainCar* car){
     float speed;
     int total_horsepower = 0;
@@ -78,28 +81,32 @@ float CalculateSpeedAdded(TrainCar* train, TrainCar* car){
     speed = (float(total_horsepower) * 550 * 3600) / ((20/.01) * 0.02 * 5280 * float(total_weight));
     return speed;
 }
+//Function that calculates the average distance to a dining car
 float AverageDistanceToDiningCar(TrainCar* train){
     float total_distance = 0;
     int num_passenger_cars = 0;
-    while (train != nullptr){
+    while (train != nullptr){ 
         if (train->isPassengerCar()){
-            bool found_forward = false;
-            bool engine_forward = false;
-            int front_dist = 0;
+            bool found_forward = false; //Boolean for keeping track of if we have found a dining car iterating forward
+            bool engine_forward = false; //Boolean for keeping track of if we have found a engine iterating forward
+            int front_dist = 0; //Keeps track of the distance iterating forward from a passenger car
             TrainCar* temp = train;
             while (temp != nullptr){
                 if (temp->isEngine() && temp->next != nullptr){
-                    engine_forward = true;
-                    break;
+                    engine_forward = true; //If we have found a engine and it is not the last car in the train
+                    break;                 //,then set that we have found a engine iterating forwards
                 }
-                if (temp->isDiningCar()){
-                    found_forward = true;
+                if (temp->isDiningCar()){ //If we have found a dining car, set that we have found a dining car
+                    found_forward = true; //iterating forwards
                     break;
                 }
                 front_dist += 1;
                 temp = temp->next;
             }
-            if (found_forward == false || engine_forward){
+            //If we did not find a dining car or we have run into a engine iterating forwards, then we iterate 
+            // backwards instead and check if there is a dining car.
+            // If there is no dining car or a engine is blocking the way going backwards as well, return a negative value
+            if (found_forward == false || engine_forward){ 
                 int back_dist = 0;
                 TrainCar* temp = train;
                 while(temp != nullptr){
@@ -125,20 +132,26 @@ float AverageDistanceToDiningCar(TrainCar* train){
     float average = total_distance/num_passenger_cars;
     return average;
 }
+//Functon for finding the closest sleeper car to a engine
 int ClosestEngineToSleeperCar(TrainCar* train){
     TrainCar* temp;
-    int smallest_dist = 9882;
+    int smallest_dist = 9882; //set the initial value to a absurdly big number so we can find the minimum
+    bool found_passenger = false;
+    bool found_engine = false;
     while(train != nullptr){
+        //If the car is a sleeping car, we look for a engine iterating forwards and backwards
         if (train->isSleepingCar()){
+            found_passenger = true; 
             int temp_val = 0;
             int tmp_front_dist = 0;
             temp = train;
             while (temp != nullptr){
-                if (temp->isEngine()){
+                if (temp->isEngine()){ //Found a engine going forwards
+                    found_engine = true;
                     break;
                 }
-                if (temp->next == nullptr){
-                    tmp_front_dist = 32949;
+                if (temp->next == nullptr){ //if we don't find a engine, set front dist
+                    tmp_front_dist = 32949; //to a big number 
                     break;
                 }
                 tmp_front_dist += 1;
@@ -147,28 +160,31 @@ int ClosestEngineToSleeperCar(TrainCar* train){
             int tmp_back_dist = 0;
             temp = train;
             while (temp != nullptr){
-                if (temp->isEngine()){
+                if (temp->isEngine()){ //Found a engine going backwards
+                    found_engine = true;
                     break;
                 }
-                if (temp->prev == nullptr){
-                    tmp_back_dist = 46463;
+                if (temp->prev == nullptr){ //If we don't find a engine, set back dist
+                    tmp_back_dist = 46463;  // to a big number
                     break;
                 }
                 tmp_back_dist += 1;
                 temp = temp->prev;
-                
             }
-
-            temp_val = std::min(tmp_front_dist,tmp_back_dist);
-            if (temp->prev == nullptr){
-                smallest_dist = temp_val;
+            temp_val = std::min(tmp_front_dist,tmp_back_dist);  //Compare the distances of reaching a engine from a passenger car going backwards and forwards
+            if (temp->prev == nullptr){                         // and pick the smallest value
+                smallest_dist = temp_val; 
             }
-            smallest_dist = std::min(smallest_dist,temp_val);
-        }
+            smallest_dist = std::min(smallest_dist,temp_val); //Compare the current candidate for smallest distance to the temporary value we just                     
+        }                                                      // we just got and choose the smallest one
         train = train->next;
+    }
+    if (found_engine == false || found_passenger == false){ //If there is no sleeping cars or engines, return a negative value
+        return -1;
     }
     return smallest_dist;
 }
+//Helper function that calculates the amount of cars a train has
 int count_cars(TrainCar* train){
     int count = 0;
     while (train != nullptr){
@@ -177,16 +193,7 @@ int count_cars(TrainCar* train){
     }
     return count;
 }
-int count_engines(TrainCar* train){
-     int count = 0;
-    while (train != nullptr){
-        if (train->isEngine()){
-            count += 1;
-        }
-        train = train->next;
-    }
-    return count;
-}
+//Push back function that links the given car to the back of the train recursively
 void PushBack(TrainCar* &train, TrainCar* car){
     if (train == nullptr){
         train = car;
@@ -199,71 +206,66 @@ void PushBack(TrainCar* &train, TrainCar* car){
         PushBack(train->next,car);
     }
 }
+//Function that adds the first car from the second train to the back of the train from the first argument
+//We use it to add either freight cars or engines, taking it from a train that only has engines or freights
 void AddCarBack(TrainCar *& train, TrainCar *& car) {
-    if (car != NULL) {
-        if (train == NULL) {
+    if (car != nullptr) {
+        if (train == nullptr) {
             train = car;
-            train->next = NULL;
-            train->prev = NULL;
-            
+            train->next = nullptr;
+            train->prev = nullptr;
         } else {
-            TrainCar* nxt = car->next;   
+            TrainCar* next = car->next;  
             PushBack(train, car);
-            if (nxt != NULL) {
-                nxt->prev = NULL;
-                car = nxt;
+            if (next != nullptr) {
+                next->prev = nullptr;
+                car = next;
             } else {
-                car = NULL;
+                car = nullptr;
             }
         }
     }
 }
+//Function that adds the first car from the second train to the front of the train from the first argument
+//Same purpose as addcarback
 void AddCarFront(TrainCar *& train, TrainCar *& car) {
-    if (car != NULL) {
-    
-        TrainCar* nxt = car->next;
-        
-        // If this is the first node, then we need to do things a bit differently
-        if (train == NULL) {
+    if (car != nullptr) {
+        TrainCar* next = car->next;
+        if (train == nullptr) {
             train = car;
-            train->next = NULL;
-            train->prev = NULL;
-            
+            train->next = nullptr;
+            train->prev = nullptr;
         } else {
-            TrainCar* second = train;     // used to be the first car in the train, now it will be the second
+            TrainCar* next1 = train;
             train = car;
-            train->prev = NULL;
-            train->next = second;
-            if (second != NULL) {
-                second->prev = train;
+            train->prev = nullptr;
+            train->next = next1;
+            if (next1 != nullptr) {
+                next1->prev = train;
             }
         }
-          // next car after the first one (which will be taken out)
-        if (nxt != NULL) {
-            nxt->prev = NULL;
-            car = nxt;
+        if (next != nullptr) {
+            next->prev = nullptr;
+            car = next;
         } else {
-            car = NULL;
+            car = nullptr;
         }
     }
 }
+//Function that removes the first car in a train and returns it
 TrainCar* PopFront(TrainCar*& train) {
-    TrainCar* ptr = train;
-    // If list is empty, do nothing and return a NULL pointer
-    if (train == NULL) return NULL;
-    else if (train->next == NULL) {
-        // If there is only 1 element in list, no need to modify prev and next
-        // pointers.
-        train = NULL;
-        return ptr;
+    TrainCar* current = train;
+    if (train == nullptr) return nullptr;
+    else if (train->next == nullptr) {
+        train = nullptr;
+        return current;
     }
-    // Otherwise, move pointer to next element
     train = train->next;
-    // Modify 2 pointers so that the second element become new head
-    train->prev = NULL;
-    ptr->next = NULL;
-    return ptr;
+    train->prev = nullptr;
+    current->next = nullptr;
+    return current;
 }
+//Function that returns a specific car from a train based on the given index
 TrainCar* getTrain(TrainCar*& train, int index){
     TrainCar* current_car = train;
     int cur_index = 0;
@@ -273,35 +275,42 @@ TrainCar* getTrain(TrainCar*& train, int index){
     }
     return current_car;
 }
-void swapCars(TrainCar*& train, TrainCar* car1, TrainCar* car2) {
-    TrainCar* temp = car1;
-    TrainCar* temp2 = car2;
-    TrainCar* previousCar = temp->prev;
-    TrainCar* nextCar = temp->next;
-    TrainCar* previousCar2 = temp2->prev;
-    TrainCar* nextCar2 = temp2->next;
+//Function that moves a specific car in a train to the wanted index
+void moveCar(TrainCar*& train, TrainCar* car, int index) {
+    // If the car is already at the specified index, return
+    if (car == nullptr || car->next == nullptr || car->prev == nullptr) {
+        return;
+    }
 
-    if (nextCar != nullptr){
-        nextCar->prev = temp2;
-    }
-    if (nextCar != nullptr){
-        previousCar->next = temp2;
-    }
-    
-    if (temp2->next != nullptr){
-        temp2->next->prev = temp;
-    }
-    if (temp2->prev != nullptr){
-        temp2->prev->next = temp;
-    }
-    temp->next = temp2->next;
-    temp->prev = temp2->prev;
+    // Delink the car from its current position in the train
+    car->prev->next = car->next;
+    car->next->prev = car->prev;
 
-    temp2->next = nextCar;
-    temp2->prev = previousCar;
+    // Go through the train and find the wanted car
+    TrainCar* current = train;
+    int currentIndex = 0;
+    while (current != nullptr && currentIndex < index) {
+        current = current->next;
+        currentIndex++;
+    }
 
+    // Insert the car into its new spot
+    if (current == nullptr) {
+        car->prev = current->prev;
+        current->prev->next = car;
+        car->next = current;
+    } else {
+        car->next = current;
+        car->prev = current->prev;
+        current->prev = car;
+        if (car->prev == nullptr) {
+            train = car;
+        } else {
+            car->prev->next = car;
+        }
+    }
 }
-
+//Deletes all the memorys associated with the train recursively
 void DeleteAllCars(TrainCar*& train) {
     if (train == nullptr){
         return;
@@ -309,20 +318,24 @@ void DeleteAllCars(TrainCar*& train) {
     DeleteAllCars(train->next);
     delete train;
 }
+//Ship freight algorithm
 std::vector<TrainCar*> ShipFreight(TrainCar*& engines, TrainCar*& freights, const int min_speed, const int max_cars){
     if (engines == nullptr || freights == nullptr || min_speed <= 0 || max_cars <= 0){
-        return std::vector<TrainCar*> (); //initialize a empty vector to be returned
+        return std::vector<TrainCar*> (); //initialize a empty vector to be returned if any conditions are not acceptable
     }
-
     std::vector<TrainCar*> trains;
-
-    while (engines != nullptr && freights != nullptr){
+    
+    while (engines != nullptr && freights != nullptr){ //While there are still trains and freight cars
         TrainCar* current_train = nullptr;
         AddCarFront(current_train, engines);
 
         int current_cars = count_cars(current_train);
         float current_speed = CalculateSpeed(current_train);
         
+        //While the cars speed is above the minimum speed, the number of cars are below the max number of cars and there are still freights cars 
+        // and engines, calculate the speed of the train if we add the current freight car, if it is greater then the minimum speed, the the freight
+        // car to the train. If the speed is lower, check if we can add a engine and another train or else stop the loop and add the completed train
+        // to all the trains
         while (current_speed > min_speed && current_cars < max_cars && freights != nullptr && engines != nullptr){
             if (CalculateSpeedAdded(current_train, freights) > min_speed){
                 AddCarBack(current_train, freights);
@@ -339,6 +352,7 @@ std::vector<TrainCar*> ShipFreight(TrainCar*& engines, TrainCar*& freights, cons
     }
     return trains;
 }
+//Seperate Function that seperates a train optimally
 void Separate(TrainCar*& train1, TrainCar*& train2, TrainCar*& train3){
     //Counts the number of engines in the original train
     train2 = nullptr;
@@ -385,14 +399,14 @@ void Separate(TrainCar*& train1, TrainCar*& train2, TrainCar*& train3){
     int engines_in_second = 0; //The amount of engines that is in the second half of the original train
     TrainCar* ptr = train1;
     //Calculates the amount of engines
-    for (unsigned int i = 0; i < first_length; i++){
+    for (int i = 0; i < first_length; i++){
         if (ptr->isEngine()){
             engines_in_first += 1;
         }
         ptr = ptr->next;
     }
     
-    for (unsigned int i = first_length; i < second_length + first_length; i++){
+    for (int i = first_length; i < second_length + first_length; i++){
         if (ptr->isEngine()){
             engines_in_second += 1;
         }
@@ -401,91 +415,72 @@ void Separate(TrainCar*& train1, TrainCar*& train2, TrainCar*& train3){
 
     int move_engines;
     int track;
-
+    //If there are more engines then there should be in the first train to be made, then we want
+    // to move the correct number of engines to the second train
     if (engines_in_first > first_engines){
-        move_engines = engines_in_first - first_engines;
-
-        track = 0;
-        int first_engine_pos = 0;
-        int second_engine_pos;
-        TrainCar* temp = train1;
-        bool did = false;
-        int track_pos = first_length;
-        while (track < move_engines){
-            for ( ;first_engine_pos < first_length; first_engine_pos++ ){
-                if (temp->isEngine() && track_pos == first_length){
-                    temp = temp->next;
-                    track_pos--;
-                    continue;
-                }
+        move_engines = engines_in_first - first_engines; //The amount of engines to be moved
+ 
+        track = 0; //Tracks how many engines were moved
+        int engine_pos = first_length - 1; //Engine position
+        TrainCar* temp = train1; 
+        //Go to the middle of the train
+        for (int i = 0; i < first_length - 1; i++){
+            temp = temp->next;
+        }
+        //Insert spot basically tells us where to move the engines to. It is based on how many we want to move
+        int insert_spot = first_length + move_engines - 1; 
+        //While there are still engines to be moved, we iterate through the first half of the original train backwards to find
+        //the closest engine to be added to the second train to be made
+        while (track < move_engines){ 
+            for ( ;engine_pos != 0; engine_pos-- ){
                 if (temp->isEngine()){
-                    second_engine_pos = first_engine_pos + track_pos;
-                    TrainCar* first_swap = getTrain(train1, first_engine_pos);
-                    TrainCar* second_swap = getTrain(train1, second_engine_pos);
-                    if (second_swap->isEngine()){
-                        temp = temp->next;
-                        track_pos--;
-                        if (track == move_engines){
-                            break;
-                        }
-                        continue;
-                    }
-                    swapCars(train1, first_swap, second_swap);
+                    TrainCar* swap_engine = getTrain(train1, engine_pos);
+                    moveCar(train1, swap_engine, insert_spot);
                     track += 1;
                     if (track == move_engines){
                         break;
                     }
                 }
-                temp = temp->next;
-                track_pos--;
+                temp = temp->prev;
             }
         }
     } else if (engines_in_second > second_engines){
+        //Basically the same thing as the code above but moves from the second train to the first train
+        //if the second train has more engines then it should have
         move_engines = engines_in_second - second_engines;
-
         track = 0;
-        int first_engine_pos = first_length;
-        int second_engine_pos;
+        int engine_pos = first_length;
         TrainCar* temp = train1;
-        for (unsigned int i = 0; i < first_length;i++){
+        for (int i = 0; i < first_length;i++){
             temp = temp->next;
         }
-        int track_pos = 1;
+        int insert_spot = first_length - move_engines;
         while (track < move_engines){
-            for ( ;first_engine_pos < first_length + second_length; first_engine_pos++){
-                if (temp->isEngine() && track_pos == 1){
-                    temp = temp->next;
-                    track_pos++;
-                    continue;
+            for ( ;engine_pos < first_length + second_length; engine_pos++){
+                if (temp->isEngine() && engine_cars == 2 && engine_pos == insert_spot + move_engines && original_length % 2 != 0){
+                    first_length += 1; // Test case if the extra engine is right in the middle of a odd original train
+                    second_length -= 1;
+                    track += 1;
+                    break;
                 }
                 if (temp->isEngine()){
-                    second_engine_pos = first_engine_pos - track_pos;
-                    TrainCar* first_swap = getTrain(train1, first_engine_pos);
-                    TrainCar* second_swap = getTrain(train1, second_engine_pos);
-                    if (second_swap->isEngine()){
-                        temp = temp->next;
-                        track_pos++;
-                        if (track == move_engines){
-                            break;
-                        }
-                        continue;
-                    }
-                    swapCars(train1, first_swap, second_swap);
+                    TrainCar* engine_swap = getTrain(train1, engine_pos);
+                    moveCar(train1, engine_swap, insert_spot);
                     track += 1;
                     if (track == move_engines){
                         break;
                     }
                 }
                 temp = temp->next;
-                track_pos++;
             }
         }
     }
+    //Build the 2 trains based on original trains
     TrainCar* temp1 = train1;
-    for (unsigned int i = 0; i < first_length; i++){
+    for (int i = 0; i < first_length; i++){
         PushBack(train2, PopFront(temp1));
     }
-    for (unsigned int i = 0; i < second_length; i++){
+    for (int i = 0; i < second_length; i++){
         PushBack(train3, PopFront(temp1));
     }
     train1 = nullptr;

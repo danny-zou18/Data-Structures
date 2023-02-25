@@ -33,7 +33,7 @@ int main() {
 
   //SimpleTrainTest();
   //ShipFreightTests();
-  SeparateTests();
+  //SeparateTests();
 
   StudentTests();
 
@@ -225,8 +225,6 @@ void SimpleTrainTest() {
 // the freight car weights
 void ShipFreightHelper(MTRand_int32 &mtrand, int num_engines, int num_cars, int min_speed, int max_cars_per_train) {
 
-  
-  
   // UNCOMMENT THIS FUNCTION WHEN YOU'RE READY TO TEST SHIP FREIGHT
 
   // create a chain with specified # of engines engines
@@ -470,8 +468,6 @@ void SeparateTests() {
 
   TrainCar* t;
 
-  
-
   // UNCOMMENT THESE TESTS ONE AT A TIME AS YOU WORK ON SEPARATE
 
   t = NULL;
@@ -555,11 +551,82 @@ void StudentTests() {
   std::cout << "============================================================================" << std::endl;
   std::cout << "STUDENT TESTS" << std::endl;
 
-  //
-  //
-  // Write your own test cases here
-  //
-  //
+  TrainCar* t;
+
+  // UNCOMMENT THESE TESTS ONE AT A TIME AS YOU WORK ON SEPARATE
+
+  //Test Case for multiple engines to be moved in a even train when all the engines are at the beginning
+  t = NULL;
+  PushBack(t, TrainCar::MakeEngine()); 
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakeDiningCar());
+  PushBack(t, TrainCar::MakeSleepingCar());
+  PushBack(t, TrainCar::MakeSleepingCar());
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakePassengerCar());
+
+  SeparateTestHelper(t, "#1");
+
+
+  //Test case for multiple engines to be moved in a odd train when all the engines are at the beginning
+  t = NULL;
+  PushBack(t, TrainCar::MakeEngine()); 
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakeDiningCar());
+  PushBack(t, TrainCar::MakeSleepingCar());
+  PushBack(t, TrainCar::MakeSleepingCar());
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakePassengerCar());
+
+  SeparateTestHelper(t, "#2");
+
+
+  //Test case for multiple engines to be moved in a even train when all the engines are at the end
+  t = NULL;
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakeDiningCar());
+  PushBack(t, TrainCar::MakeSleepingCar());
+  PushBack(t, TrainCar::MakeSleepingCar());
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakeEngine()); 
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakeEngine());
+
+  SeparateTestHelper(t, "#3");
+
+  //A more general test case to test if stuff is getting calculated correctly
+  t = NULL;
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakeDiningCar());
+  PushBack(t, TrainCar::MakeSleepingCar());
+  PushBack(t, TrainCar::MakeSleepingCar());
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakeEngine()); 
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakePassengerCar());
+
+  SeparateTestHelper(t, "#4");
 
   std::cout << "StudentTests complete" << std::endl;
 }
