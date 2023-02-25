@@ -567,7 +567,6 @@ void StudentTests() {
   PushBack(t, TrainCar::MakeSleepingCar());
   PushBack(t, TrainCar::MakeSleepingCar());
   PushBack(t, TrainCar::MakePassengerCar());
-  PushBack(t, TrainCar::MakeEngine());
   PushBack(t, TrainCar::MakePassengerCar());
 
   SeparateTestHelper(t, "#1");
@@ -627,6 +626,25 @@ void StudentTests() {
   PushBack(t, TrainCar::MakePassengerCar());
 
   SeparateTestHelper(t, "#4");
+
+  //The same test case as above but just instead with a odd number of cars
+  t = NULL;
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakeDiningCar());
+  PushBack(t, TrainCar::MakeSleepingCar());
+  PushBack(t, TrainCar::MakeSleepingCar());
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakeEngine()); 
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakeEngine());
+  PushBack(t, TrainCar::MakePassengerCar());
+  PushBack(t, TrainCar::MakePassengerCar());
+  SeparateTestHelper(t, "#5");
 
   std::cout << "StudentTests complete" << std::endl;
 }

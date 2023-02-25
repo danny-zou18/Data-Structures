@@ -434,12 +434,14 @@ void Separate(TrainCar*& train1, TrainCar*& train2, TrainCar*& train3){
         while (track < move_engines){ 
             for ( ;engine_pos != 0; engine_pos-- ){
                 if (temp->isEngine()){
+                    temp = temp->prev;
                     TrainCar* swap_engine = getTrain(train1, engine_pos);
                     moveCar(train1, swap_engine, insert_spot);
                     track += 1;
                     if (track == move_engines){
                         break;
                     }
+                    continue;
                 }
                 temp = temp->prev;
             }
