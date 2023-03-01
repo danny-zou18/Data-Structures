@@ -31,11 +31,11 @@ void StudentTests();
 
 int main() {
 
-  //SimpleTrainTest();
-  //ShipFreightTests();
-  //SeparateTests();
+  SimpleTrainTest();
+  ShipFreightTests();
+  SeparateTests();
 
-  StudentTests();
+  // StudentTests();
 
   return 0;
 }
