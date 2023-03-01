@@ -30,7 +30,7 @@ public:
 // confusion during development.
 
 
-enum GRID_STATUS { GRID_CLEAR, GRID_BLOCKED };
+enum GRID_STATUS { GRID_CLEAR, GRID_BLOCKED, GRID_PATH };
 
 
 // Input the grid and the start location.  The input is a sequence of
@@ -96,29 +96,39 @@ void print_grid(const std::vector<std::vector<GRID_STATUS> > & blocked_grid,
         std::cout << " S";
       else if (blocked_grid[x][y] == GRID_BLOCKED)
         std::cout << " X";
+      else if (blocked_grid[x][y] == GRID_PATH)
+        std::cout << " $";
       else 
         std::cout << " .";
     }
     std::cout << std::endl;
   }
 }
+void path_grid(std::vector<Point> path, std::vector<std::vector<GRID_STATUS> >& blocked_grid){
+  for (Point p : path){
+    blocked_grid[p.x][p.y] = GRID_PATH;
+  }
+}
 
-int recursivePaths(Point current, std::vector<std::vector<GRID_STATUS> > blocked_grid){
+int recursivePaths(Point current, std::vector<std::vector<GRID_STATUS> > blocked_grid, std::vector<Point> path, std::vector<std::vector<Point> >& paths){
   int x = current.x;
   int y = current.y;
   if (blocked_grid[x][y] == GRID_BLOCKED){
     return 0;
   }
   if ( x == 0 && y == 0) {
+    paths.push_back(path);
     return 1;
-  } 
+  }
+  path.push_back(current);
+
   if (x==0){
-    return recursivePaths(Point(x,y-1),blocked_grid);
+    return recursivePaths(Point(x,y-1),blocked_grid, path, paths);
   }
   if (y==0){
-    return recursivePaths(Point(x-1,y),blocked_grid);
+    return recursivePaths(Point(x-1,y),blocked_grid, path, paths);
   }
-  return recursivePaths(Point(x-1,y),blocked_grid) + recursivePaths(Point(x,y-1),blocked_grid);
+  return recursivePaths(Point(x-1,y),blocked_grid, path, paths) + recursivePaths(Point(x,y-1),blocked_grid, path, paths);
 }
 
 
@@ -133,15 +143,17 @@ int main(int argc, char* argv[]) {
     std::cerr << "Could not open " << argv[1] << std::endl;
     return 1;
   }
-  
   std::vector<std::vector<GRID_STATUS> > blocked_grid;
   int start_x, start_y;
   read_grid(istr, blocked_grid, start_x, start_y);
+  std::vector<Point> path;
+  std::vector<std::vector<Point> > paths;
+  int final = recursivePaths(Point(start_x,start_y),blocked_grid, path, paths);
+  path_grid(paths[0],blocked_grid);
   print_grid(blocked_grid, start_x, start_y);
 
   // Start here with your code...
-
-  std::cout << recursivePaths(Point(start_x,start_y),blocked_grid) << std::endl;
+  std::cout << final << std::endl;
   return 0;
 }
       

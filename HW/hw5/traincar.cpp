@@ -212,8 +212,8 @@ void AddCarBack(TrainCar *& train, TrainCar *& car) {
     if (car != nullptr) {
         if (train == nullptr) {
             train = car;
-            train->next = nullptr;
             train->prev = nullptr;
+            train->next = nullptr;
         } else {
             TrainCar* next = car->next;  
             PushBack(train, car);
