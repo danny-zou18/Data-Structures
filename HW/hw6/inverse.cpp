@@ -8,16 +8,37 @@
 
 using std::cout; using std::endl; using std::cerr; using std::string; using std::vector;
 
+// dy dx
+std::pair<int, int> getDyDx(const unsigned int direction) {
+    if (direction == 1){
+        return std::make_pair(0, 1);
+    } else if (direction == 2){
+        return std::make_pair(1, 1);
+    } else if (direction == 3){
+        return std::make_pair(1,0);
+    } else if (direction == 4){
+        return std::make_pair(1,-1);
+    } else if (direction == 5){
+        return std::make_pair(0,-1);
+    } else if (direction == 6){
+        return std::make_pair(-1,-1);
+    } else if (direction == 7){
+        return std::make_pair(-1,0);
+    } else if (direction == 8){
+        return std::make_pair(-1,1);
+    }
+}
+
 class loc{
 public:
     loc(int r = 0, int c = 0): row(c), col(c) {}
     int row, col;
 };
 
-void insert_word(const string& word, Board& board, const loc& first_letter, int direction){
-    
+void insert_word(const string& word, Board& board, const loc& first_letter, const unsigned int direction){
+
 }
-bool check_direction(const string& word, const Board& board, int direction, const loc& cur_loc, int index){
+bool check_direction(const string& word, const Board& board, const unsigned int direction, const loc& cur_loc, int index){
     int width = board.getWidth();
     int height = board.getHeight();
     if (index == word.size()){
@@ -28,23 +49,8 @@ bool check_direction(const string& word, const Board& board, int direction, cons
         return false;
     }
     bool found;
-    if (direction == 1){
-        found = check_direction(word, board, direction, loc(cur_loc.row,cur_loc.col + 1), index+1);
-    } else if (direction == 2){
-        found = check_direction(word, board, direction, loc(cur_loc.row + 1,cur_loc.col + 1), index+1);
-    } else if (direction == 3){
-        found = check_direction(word, board, direction, loc(cur_loc.row + 1,cur_loc.col), index+1);
-    } else if (direction == 4){
-        found = check_direction(word, board, direction, loc(cur_loc.row + 1,cur_loc.col - 1), index+1);
-    } else if (direction == 5){
-        found = check_direction(word, board, direction, loc(cur_loc.row,cur_loc.col - 1), index+1);
-    } else if (direction == 6){
-        found = check_direction(word, board, direction, loc(cur_loc.row - 1,cur_loc.col - 1), index+1);
-    } else if (direction == 7){
-        found = check_direction(word, board, direction, loc(cur_loc.row - 1,cur_loc.col), index+1);
-    } else if (direction == 8){
-        found = check_direction(word, board, direction, loc(cur_loc.row - 1,cur_loc.col + 1), index+1);
-    }
+    std::pair<int, int> dydx = getDyDx(direction);
+    found = check_direction(word, board, direction, loc(cur_loc.row + dydx.second, cur_loc.col + dydx.first), index + 1);
     return found;
 }
 /* 1 - Right, 2 - BottomRight, 3 - Bottom, 4 - BottomLeft, 5 - Left, 6 - TopLeft, 7 - Top, 8 - TopRight

@@ -1,5 +1,7 @@
 #include "board.h"
 
+
+
 Board::Board(int Awidth, int Aheight){
     width = Awidth;
     height = Aheight;

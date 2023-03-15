@@ -1,8 +1,10 @@
 #include <vector>
+#include <utility>
 #ifndef __board_h_
 #define __board_h_
 
 using std::vector;
+
 
 class Board{
 public:
