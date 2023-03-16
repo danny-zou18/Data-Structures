@@ -4,7 +4,7 @@
 
 class loc{
 public:
-    loc(int r = 0, int c = 0): row(c), col(c) {}
+    loc(int r = 0, int c = 0): row(r), col(c) {}
     void changeLoc(const std::pair<int,int>& location){row += location.first; col += location.second;}
     int row, col;
 };

@@ -4,9 +4,9 @@
       "type": "lldb",
       "request": "launch",
       "name": "Launch",
-      "program": "${workspaceFolder}/HW/hw5/a.out",
-      "args": ["-arg1", "-arg2"],
-      "cwd": "${workspaceFolder}/HW/hw5"
+      "program": "${workspaceFolder}/HW/hw6/a.out",
+      "args": ["puzzle1.txt", " out1.txt", "one_solution"],
+      "cwd": "${workspaceFolder}/HW/hw6"
     }
   ]
 }

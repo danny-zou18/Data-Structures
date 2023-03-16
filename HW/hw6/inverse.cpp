@@ -1,6 +1,6 @@
 #include <iostream>
 #include <iomanip>
-#include <string>
+#include <cstring>
 #include <vector>
 #include <fstream>
 #include <vector>
@@ -40,7 +40,7 @@ void insert_word(const string& word, Board& board, const loc& first_letter, cons
     }
 }
 bool check_direction(const string& word, const Board& board, const unsigned int direction, const loc& cur_loc, int index){
-    cout << direction << endl;
+    //cout << direction << endl;
     int width = board.getWidth();
     int height = board.getHeight();
     if (index == word.size()){
