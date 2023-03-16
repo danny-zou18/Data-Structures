@@ -1,5 +1,6 @@
 #include <vector>
 #include <utility>
+#include <iostream>
 #ifndef __board_h_
 #define __board_h_
 
@@ -16,6 +17,7 @@ public:
     int getHeight() const {return height;}
 
     void setPos(int row, int col, char letter) {board[row][col] = letter;}
+    void printBoard() const;
 
 private:
     vector<vector<char> > board;

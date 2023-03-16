@@ -5,6 +5,7 @@
 #include <fstream>
 #include <vector>
 #include "board.h"
+#include "loc.h"
 
 using std::cout; using std::endl; using std::cerr; using std::string; using std::vector;
 
@@ -29,41 +30,45 @@ std::pair<int, int> getDyDx(const unsigned int direction) {
     }
 }
 
-class loc{
-public:
-    loc(int r = 0, int c = 0): row(c), col(c) {}
-    int row, col;
-};
-
 void insert_word(const string& word, Board& board, const loc& first_letter, const unsigned int direction){
-
+    //cout << first_letter.row << " " << first_letter.col << endl;
+    std::pair<int,int> dydx = getDyDx(direction);
+    loc temp(first_letter.row,first_letter.col);
+    for (unsigned int i = 0; i < word.size(); i++){
+        board.setPos(temp.row,temp.col,word[i]);
+        temp.changeLoc(dydx);
+    }
 }
 bool check_direction(const string& word, const Board& board, const unsigned int direction, const loc& cur_loc, int index){
+    cout << direction << endl;
     int width = board.getWidth();
     int height = board.getHeight();
     if (index == word.size()){
         return true;
     }
-    if (cur_loc.row < 0 || cur_loc.row > height || cur_loc.col < 0 || cur_loc.col > width 
+    if (cur_loc.row < 0 || cur_loc.row >= height || cur_loc.col < 0 || cur_loc.col >= width 
     || (board.getPos(cur_loc.row, cur_loc.col) != ' ' &&  (board.getPos(cur_loc.row, cur_loc.col)) != word[index])){
         return false;
     }
-    bool found;
     std::pair<int, int> dydx = getDyDx(direction);
-    found = check_direction(word, board, direction, loc(cur_loc.row + dydx.second, cur_loc.col + dydx.first), index + 1);
-    return found;
+    return check_direction(word, board, direction, loc(cur_loc.row + dydx.first, cur_loc.col + dydx.second), index + 1);
 }
-/* 1 - Right, 2 - BottomRight, 3 - Bottom, 4 - BottomLeft, 5 - Left, 6 - TopLeft, 7 - Top, 8 - TopRight
-*/
 
-Board single_solution(vector<string>& words, vector<string>& non_allowed, int width, int height){
-    vector<int> directions = {1,2,3,4,5,6,7,8};
-    Board board(width, height);
-    loc start(0,0);
-    for (unsigned int i = 0; i < words.size(); i++){
-        for (int i = 0; i < height; i++){
-            for (int j = 0; j < width; j++){
-                
+bool single_solution(vector<string>& words, Board& board, vector<string>& non_allowed, int width, int height, int index){
+    if (index == words.size()){
+        return true;
+    }
+    for (int y = 0; y < height; y++){
+        for (int x = 0; x < width; x++){
+            for (int i = 1; i <= 8; i++){
+                if (check_direction(words[index], board, i, loc(y,x), 0)){
+                    insert_word(words[index], board, loc(y,x), i);
+                    if (single_solution(words,board, non_allowed, width, height, index + 1)){
+                        return true;
+                    } else {
+                        insert_word(std::string(words[index].size(), ' '), board, loc(y,x), i);
+                    }
+                }
             }
         }
     }
@@ -111,6 +116,9 @@ int main(int argc, char* argv[]){
             not_allowed.push_back(word);
         }
     }
+    Board board(width, height);
+    single_solution(words, board, not_allowed, width, height, 0);
+    board.printBoard();
     
     return 0;
 }  
