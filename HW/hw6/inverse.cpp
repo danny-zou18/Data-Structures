@@ -9,8 +9,15 @@
 #include "loc.h"
 
 using std::cout; using std::endl; using std::cerr; using std::string; using std::vector;
-
-// dy dx
+//Basic location class to help us keep track of grid location
+class loc{
+public:
+    loc(int r = 0, int c = 0): row(r), col(c) {}
+    void changeLoc(const std::vector<int> directions){row += directions[0]; col += directions[1];}
+    int row, col;
+};
+//Function that returns a vector containing two values for directions, the first index
+//changing the row and the second second changing the column
 vector<int> getDyDx(const unsigned int direction) {
     if (direction == 1){
         vector<int> right;
@@ -56,6 +63,7 @@ vector<int> getDyDx(const unsigned int direction) {
     vector<int> empty;
     return empty;
 }
+//Recursive function that checks if a word is found in a specific direction and a specific location
 bool searchDirection(const Board& board, const string& word, const unsigned int direction,const loc& cur_loc, unsigned int index) {
     // Check if we have found the entire word
     if (index == word.size()) {
@@ -70,6 +78,7 @@ bool searchDirection(const Board& board, const string& word, const unsigned int 
     vector<int> dydx = getDyDx(direction);
     return searchDirection(board, word, direction,loc(cur_loc.row + dydx[0], cur_loc.col + dydx[1]), index + 1);
 }
+//Function that searches a board for a word and uses the "searchDirection" function as a helper
 bool searchWord(const Board& board, const string& word) {
     // Check each position in the puzzle for the first letter of the word
     for (int y = 0; y < board.getHeight(); y++) {
@@ -81,13 +90,12 @@ bool searchWord(const Board& board, const string& word) {
                         return true;
                     }
                 }
-    
             }
         }
     }
     return false;
-
 }
+//Function that checks if a board is already in a board vector
 bool in_vector(const vector<Board>& boards, const Board& board){
     for (unsigned int i = 0; i < boards.size(); i++){
         if (boards[i] == board){
@@ -96,9 +104,11 @@ bool in_vector(const vector<Board>& boards, const Board& board){
     }
     return false;
 }
+//Function that inserts a word into a board, returns true if the word can be inserted and returns false if the word cannot be inserted
 bool insert_word(const string& word, Board& board, const loc& first_letter, const unsigned int direction){
     vector<int> dydx = getDyDx(direction);
     loc temp(first_letter.row,first_letter.col);
+    //Checks if the first letter of the word to be inserted overlaps with a word already on the board
     for (unsigned int i = 0; i < word.size(); i++){
         if (i == 0 && board.getPos(temp.row,temp.col) != word[0] && board.getPos(temp.row, temp.col) != '*'){
             return false;
@@ -108,25 +118,29 @@ bool insert_word(const string& word, Board& board, const loc& first_letter, cons
     }
     return true;
 }
+//Recursive function that checks if a word can be inserted in a board, returns true if it can and false if it cannot
 bool check_direction(const string& word, const Board& board, const unsigned int direction, const loc& cur_loc, unsigned int index){
     int width = board.getWidth();
     int height = board.getHeight();
+    //This is the base case, where we have reached the end of the word and there are no more letters to be checked
     if (index == word.size()){
         return true;
     }
+    //If any of these things happen, then we cannot insert the current letter onto the board, return false
     if (cur_loc.row < 0 || cur_loc.row >= height || cur_loc.col < 0 || cur_loc.col >= width 
     || (board.getPos(cur_loc.row, cur_loc.col) != '*' &&  (board.getPos(cur_loc.row, cur_loc.col)) != word[index])){
         return false;
     }
-
     vector<int> dydx = getDyDx(direction);
     return check_direction(word, board, direction, loc(cur_loc.row + dydx[0], cur_loc.col + dydx[1]), index + 1);
 }
-
+//Recursive function that finds a singular solution to a board, returns true if a board is successfully created and false if not
 bool find_solution(const vector<string>& words, Board& board, int width, int height, unsigned int index){
+    //This is the base case, where every word that should be inserted in the board is inserted
     if (index == words.size()){
         return true;
     }
+    //Nested for loop that checks every scenario of a word being inserted recursively
     for (int y = 0; y < height; y++){
         for (int x = 0; x < width; x++){
             for (int i = 1; i <= 8; i++){
@@ -147,12 +161,16 @@ bool find_solution(const vector<string>& words, Board& board, int width, int hei
     }
     return false;
 }
+//Function that finds all possible solutions and returns it in a vector of boards
 vector<Board> find_all_solutions(vector<string>& words, int width, int height){
     vector<Board> allBoards;
     vector<string> tempWords;
     for (unsigned int i = 0; i < words.size(); i++){
         tempWords.push_back(words[i]);
     }
+    //Go through every single word and check if it can be inserted in every single possible spot 
+    //and in every single possible direction. When you can insert it , remove it from the words list
+    //and scramble on the remaining words onto the board.
     for (vector<string>::iterator it = tempWords.begin(); it != tempWords.end(); it++){
         for (vector<string>::iterator it1 = words.begin(); it1 != words.end(); it1++){
             if (*it == *it1){
@@ -177,16 +195,8 @@ vector<Board> find_all_solutions(vector<string>& words, int width, int height){
     }
     return allBoards;
 }
-void fill(Board& board, char letter){
-    for (int y = 0; y < board.getHeight(); y++){
-        for (int x = 0; x < board.getWidth(); x++){
-            if (board.getPos(y,x) == '*'){
-                board.setPos(y,x,letter);
-            }
-        }
-    }
-}
 int main(int argc, char* argv[]){
+    //Basic error checking
     if (argc != 4){
         cerr << "Not enough arguments." << endl;
         exit(1);
@@ -214,6 +224,7 @@ int main(int argc, char* argv[]){
     vector<string> words; //Vector that stores all the words that should appear in the board
     vector<string> not_allowed; //Vector that stores all the words that shouldn't appear in the board
     
+    //Parse the allowed words and the non-allowed words
     char x;
     string word;
     while (in_str >> x){
@@ -228,7 +239,9 @@ int main(int argc, char* argv[]){
             not_allowed.push_back(word);
         }
     }
+    //Find all the boards when given the normal, unreversed words list
     vector<Board> boards = find_all_solutions(words, width, height);
+    //Make a list that contains all the words but have the words be reversed
     vector<string> reverse_words;
     for (unsigned int i = 0; i < words.size(); i++){
         string reverse = "";
@@ -237,8 +250,9 @@ int main(int argc, char* argv[]){
         }
         reverse_words.push_back(reverse);
     }
+    //Find all the boards when given the reversed words list
     vector<Board> flipboards = find_all_solutions(reverse_words, width, height);
-
+    //Now put them all into one vector
     vector<Board> allboards;
     for (unsigned int i = 0; i < boards.size(); i++){
         if (!in_vector(allboards, boards[i])){
@@ -250,6 +264,7 @@ int main(int argc, char* argv[]){
             allboards.push_back(flipboards[i]);
         }
     }
+    //Check if a board contains any unallowed words, if it does, erase it from the vector
     for (vector<Board>::iterator it = allboards.begin(); it != allboards.end();){
         bool erased = false;
         for (unsigned int i = 0; i < not_allowed.size(); i++){
@@ -263,6 +278,7 @@ int main(int argc, char* argv[]){
             it++;
         }
     }
+    //Write to file
     if (strcmp(argv[3],"one_solution") == 0){
         out_str << allboards[0];
     } else {

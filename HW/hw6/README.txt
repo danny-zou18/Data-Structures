@@ -1,7 +1,7 @@
 HOMEWORK 6: INVERSE WORD SEARCH
 
 
-NAME:  < insert name >
+NAME:  < Danny Zou >
 
 
 COLLABORATORS AND OTHER RESOURCES: 
@@ -10,18 +10,18 @@ List the names of everyone you talked to about this assignment
 LMS, etc.), and all of the resources (books, online reference
 material, etc.) you consulted in completing this assignment.
 
-< insert collaborators / resources >
+Matthew Bui
+Ethan Girould
 
 Remember: Your implementation for this assignment must be done on your
 own, as described in "Academic Integrity for Homework" handout.
 
-ESTIMATE OF # OF HOURS SPENT ON THIS ASSIGNMENT:  < insert # hours >
+ESTIMATE OF # OF HOURS SPENT ON THIS ASSIGNMENT:  < 10 >
 
 
 ALGORITHM ANALYSIS:
-What's the order notation of your algorithm?
-
-
+8 for the number of directions
+O(n^8 * 8)
 
 TEST CASE SUMMARY:
 How did your program perform on the different test cases?  Summarize

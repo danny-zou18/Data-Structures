@@ -1,7 +1,7 @@
 #include "board.h"
 
 using std::cout; using std::endl;
-
+//Constructor that makes the board and fills every spot with a '*'
 Board::Board(int Awidth, int Aheight){
     width = Awidth;
     height = Aheight;
@@ -10,6 +10,7 @@ Board::Board(int Awidth, int Aheight){
         board.push_back(row);
     }
 }
+//Out operator that writes to a file in the correct format
 std::ostream& operator<< (std::ostream& out, const Board& b){
     out << "Board:" << endl;
     for (int y = 0; y < b.getHeight(); y++){
@@ -21,6 +22,7 @@ std::ostream& operator<< (std::ostream& out, const Board& b){
     }
     return out;
 }
+//Equals operator that checks if two boards are the same
 bool operator== (const Board& b1, const Board& b2){
     for (int i = 0; i < b1.getHeight(); i++){
         for (int j = 0; j < b1.getWidth(); j++){
