@@ -5,7 +5,7 @@
       "request": "launch",
       "name": "Launch",
       "program": "${workspaceFolder}/HW/hw6/a.out",
-      "args": ["puzzle1.txt", " out1.txt", "one_solution"],
+      "args": ["puzzle3.txt", " out1.txt", "one_solution"],
       "cwd": "${workspaceFolder}/HW/hw6"
     }
   ]

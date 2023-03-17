@@ -17,7 +17,6 @@ public:
     int getHeight() const {return height;}
 
     void setPos(int row, int col, char letter) {board[row][col] = letter;}
-
 private:
     vector<vector<char> > board;
     int width;

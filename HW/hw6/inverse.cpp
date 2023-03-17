@@ -68,7 +68,7 @@ bool searchDirection(const Board& board, const string& word, const unsigned int 
         return false;
     }
     vector<int> dydx = getDyDx(direction);
-    return searchDirection(board, word, direction,loc(cur_loc.row + dydx[0], cur_loc.col + dydx[1]), index+1);
+    return searchDirection(board, word, direction,loc(cur_loc.row + dydx[0], cur_loc.col + dydx[1]), index + 1);
 }
 bool searchWord(const Board& board, const string& word) {
     // Check each position in the puzzle for the first letter of the word
@@ -97,11 +97,10 @@ bool in_vector(const vector<Board>& boards, const Board& board){
     return false;
 }
 bool insert_word(const string& word, Board& board, const loc& first_letter, const unsigned int direction){
-    //cout << first_letter.row << " " << first_letter.col << endl;
     vector<int> dydx = getDyDx(direction);
     loc temp(first_letter.row,first_letter.col);
     for (unsigned int i = 0; i < word.size(); i++){
-        if (i == 0 && board.getPos(temp.row,temp.col) != word[0] && board.getPos(temp.row, temp.col) != ' '){
+        if (i == 0 && board.getPos(temp.row,temp.col) != word[0] && board.getPos(temp.row, temp.col) != '*'){
             return false;
         }
         board.setPos(temp.row,temp.col,word[i]);
@@ -116,7 +115,7 @@ bool check_direction(const string& word, const Board& board, const unsigned int 
         return true;
     }
     if (cur_loc.row < 0 || cur_loc.row >= height || cur_loc.col < 0 || cur_loc.col >= width 
-    || (board.getPos(cur_loc.row, cur_loc.col) != ' ' &&  (board.getPos(cur_loc.row, cur_loc.col)) != word[index])){
+    || (board.getPos(cur_loc.row, cur_loc.col) != '*' &&  (board.getPos(cur_loc.row, cur_loc.col)) != word[index])){
         return false;
     }
 
@@ -140,7 +139,7 @@ bool find_solution(const vector<string>& words, Board& board, int width, int hei
                     if (find_solution(words,board,  width, height, index + 1)){
                         return true;
                     } else {
-                        insert_word(std::string(words[index].size(), ' '), board, loc(y,x), i);
+                        insert_word(std::string(words[index].size(), '*'), board, loc(y,x), i);
                     }
                 }
             }
@@ -178,7 +177,15 @@ vector<Board> find_all_solutions(vector<string>& words, int width, int height){
     }
     return allBoards;
 }
-
+void fill(Board& board, char letter){
+    for (int y = 0; y < board.getHeight(); y++){
+        for (int x = 0; x < board.getWidth(); x++){
+            if (board.getPos(y,x) == '*'){
+                board.setPos(y,x,letter);
+            }
+        }
+    }
+}
 int main(int argc, char* argv[]){
     if (argc != 4){
         cerr << "Not enough arguments." << endl;
@@ -243,11 +250,17 @@ int main(int argc, char* argv[]){
             allboards.push_back(flipboards[i]);
         }
     }
-    for (vector<Board>::iterator it = allboards.begin(); it != allboards.end(); it++){
+    for (vector<Board>::iterator it = allboards.begin(); it != allboards.end();){
+        bool erased = false;
         for (unsigned int i = 0; i < not_allowed.size(); i++){
             if (searchWord(*it, not_allowed[i])){
                 it = allboards.erase(it);
-            }
+                erased = true;
+                break;
+            } 
+        }
+        if (!erased){
+            it++;
         }
     }
     if (strcmp(argv[3],"one_solution") == 0){
