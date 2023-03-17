@@ -1,2 +1,6 @@
-      
-      
+Board:
+  a v o c a d o 
+  m a g n e t l 
+  c e d a r t a 
+  r o b i n   d 
+  b u f f a l o 

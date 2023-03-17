@@ -10,11 +10,14 @@ Board::Board(int Awidth, int Aheight){
         board.push_back(row);
     }
 }
-void Board::printBoard() const {
-    for (int y = 0; y < height; y++){
-        for (int x = 0; x < width; x++){
-            cout << board[y][x] << " ";
+std::ostream& operator<< (std::ostream& out, const Board& b){
+    out << "Board:" << endl;
+    for (int y = 0; y < b.getHeight(); y++){
+        out << "  ";
+        for (int x = 0; x < b.getWidth(); x++){
+            out << b.getPos(y,x) << " ";
         }
-        cout << endl;
+        out << endl;
     }
+    return out;
 }

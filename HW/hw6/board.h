@@ -1,5 +1,6 @@
 #include <vector>
 #include <utility>
+#include <fstream>
 #include <iostream>
 #ifndef __board_h_
 #define __board_h_
@@ -17,13 +18,14 @@ public:
     int getHeight() const {return height;}
 
     void setPos(int row, int col, char letter) {board[row][col] = letter;}
-    void printBoard() const;
 
 private:
     vector<vector<char> > board;
     int width;
     int height;
 };
+
+std::ostream& operator<< (std::ostream& out, const Board& b);
 
 
 
