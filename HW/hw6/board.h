@@ -1,5 +1,4 @@
 #include <vector>
-#include <utility>
 #include <fstream>
 #include <iostream>
 #ifndef __board_h_
@@ -27,7 +26,7 @@ private:
 
 std::ostream& operator<< (std::ostream& out, const Board& b);
 
-
+bool operator== (const Board& b1, const Board& b2);
 
 
 
