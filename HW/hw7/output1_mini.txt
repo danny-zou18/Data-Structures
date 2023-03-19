@@ -9,4 +9,3 @@ fox 2
 
 -s down-smash 1
 incineroar 18
-
