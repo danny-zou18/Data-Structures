@@ -18,6 +18,12 @@ void Fighter::printSortedMoves(std::ostream& out) const {
         }
     }
 }
+bool Fighter::hasMoveFrame(const string& moveName, int frameTime) const {
+    if ((moves.find(moveName)->second) == frameTime){
+        return true;
+    } 
+    return false;
+}
 void Fighter::sortMoves(){
     for (map<string, int>::const_iterator it = moves.begin(); it != moves.end(); it++){
         map<string, int> tempMap;

@@ -25,18 +25,20 @@ void commandF(std::ostream& out, const map<string, set<map<string, int>, Compare
 	const string& moveName, unsigned int limit){
 		map<string, set<map<string, int>, CompareFrameTime> >::const_iterator it;
 		it = moves.find(moveName);
+		set<map<string, int>, CompareFrameTime2> new_set;
+		new_set.insert((it->second).begin(),(it->second).end());
 		out << "-f " << moveName << " " << limit << endl;
 		if (limit <= (it->second).size()){
-		set<map<string, int>, CompareFrameTime>::iterator it1 = (it->second).begin();
-		for (unsigned int i = 0; i < limit; i++){
-			for (map<string, int>::const_iterator it2 = (*it1).begin(); it2 != (*it1).end(); it2++){
-				out << it2->first << " " << it2->second << endl;
+			set<map<string, int>, CompareFrameTime2>::iterator it1 = (new_set).begin();
+			for (unsigned int i = 0; i < limit; i++){
+				for (map<string, int>::const_iterator it2 = (*it1).begin(); it2 != (*it1).end(); it2++){
+					out << it2->first << " " << it2->second << endl;
+				}
+				it1++;
 			}
-			it1++;
-		}
 		} else {
-			set<map<string, int>, CompareFrameTime>::iterator it1;
-			for (it1 = (it->second).begin(); it1 != (it->second).end(); it1++){
+			set<map<string, int>, CompareFrameTime2>::iterator it1;
+			for (it1 = (new_set).begin(); it1 != (new_set).end(); it1++){
 				for (map<string, int>::const_iterator it2 = (*it1).begin(); it2 != (*it1).end(); it2++){
 					out << it2->first << " " << it2->second << endl;
 				}
@@ -65,7 +67,18 @@ void commandS(std::ostream& out, const map<string, set<map<string, int>, Compare
 			}
 		}
 }
-void commandD(std::ostream& out, )
+void commandD(std::ostream& out, const map<string, Fighter>& fighters, const string& moveName, int frameTime){
+	set<string, CompareName> characters;
+	for (map<string, Fighter>::const_iterator it = fighters.begin(); it != fighters.end(); it++){
+		if ((it->second).hasMoveFrame(moveName, frameTime)){
+			characters.insert((it->second).getName());
+		}
+	}
+	out << "-d " << moveName << " " << frameTime << endl;
+	for (set<string, CompareName>::const_iterator it = characters.begin(); it != characters.end(); it++){
+		out << *it << endl;
+	}
+}
 
 //This is the only array you are allowed to have in your program.
 const std::string move_names[7] = {"jab", "forward-tilt", "up-tilt", "down-tilt", "forward-smash", "up-smash", "down-smash"};
@@ -155,7 +168,13 @@ int main(int argc, char** argv){
 			}
 			outfile << endl;
 		} else if (command == 'd'){
-
+			infile >> theMove >> frameCount;
+			if (moves.find(theMove) != moves.end()){
+				commandD(outfile, fighters, theMove, frameCount);
+			} else {
+				outfile << "Invalid move name: " << theMove << endl;
+			}
+			outfile << endl;
 		}
 	}
 

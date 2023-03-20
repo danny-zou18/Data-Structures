@@ -18,10 +18,25 @@ struct CompareFrameTime {
         
     }
 };
+struct CompareFrameTime2 {
+    bool operator()(const map<string, int>& lhs, const map<string, int>& rhs) const {
+        if (lhs.begin()->second != rhs.begin()->second){
+            return lhs.begin()->second < rhs.begin()->second;
+        } else {
+            return lhs.begin()->first < rhs.begin()->first;
+        }
+        
+    }
+};
 struct CompareMoveName {
     bool operator()(const map<string, int>& lhs, const map<string, int>& rhs) const {
         return lhs.begin()->first < rhs.begin()->first;
     }
+};
+struct CompareName {
+    bool operator()(const string& ls, const string& rs) const {
+        return ls < rs;
+	}
 };
 class Fighter{
 public:
@@ -32,6 +47,7 @@ public:
     map<string, int> getMoves() const {return moves;}
     set<map<string, int>, CompareMoveName > getSortedMoves() const {return sortedMoves;}
     void printSortedMoves(std::ostream& out) const;
+    bool hasMoveFrame(const string& moveName, int frameTime) const;
     
 
     void setMove(const string& moveName, int frameCount) {moves[moveName] = frameCount;}
