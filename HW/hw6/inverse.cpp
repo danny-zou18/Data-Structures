@@ -6,7 +6,6 @@
 #include <vector>
 #include <algorithm>
 #include "board.h"
-#include "loc.h"
 
 using std::cout; using std::endl; using std::cerr; using std::string; using std::vector;
 //Basic location class to help us keep track of grid location

@@ -10,6 +10,10 @@
 using std::string; using std::map; using std::pair; using std::cout; using std::endl;
 using std::set;
 
+//Function for if the command is Q, write the data to a outfile by passing the oufile as a reference.
+// Then check if it wants a specific move or all the moves, if they only want a specific move, find the character
+// and then get the move's frame count using the getMoveTime function. Else if we want all the moves, we find the character
+// and then call "printSortedMoves" to write all the characters moves to the outfile by reference
 void commandQ(std::ostream& out, const map<string, Fighter> fighters, const string& theMove, const string& charName){
 	if (theMove == "all"){
 		map<string, Fighter>::const_iterator it;
@@ -21,6 +25,9 @@ void commandQ(std::ostream& out, const map<string, Fighter> fighters, const stri
 		out << charName << " " << theMove << ": " << (it->second).getMoveTime(theMove) << endl;
 	}
 }
+//Function for if the command if F, write the data to a outfile by passing the oufile as a reference.
+// First we find the move in the moves map, then insert all the character run times into a new correctly sorted set
+// and then write out the correct number of characters to the outfile
 void commandF(std::ostream& out, const map<string, set<map<string, int>, CompareFrameTime> >& moves, 
 	const string& moveName, unsigned int limit){
 		map<string, set<map<string, int>, CompareFrameTime> >::const_iterator it;
@@ -28,6 +35,7 @@ void commandF(std::ostream& out, const map<string, set<map<string, int>, Compare
 		set<map<string, int>, CompareFrameTime2> new_set;
 		new_set.insert((it->second).begin(),(it->second).end());
 		out << "-f " << moveName << " " << limit << endl;
+		//If the limit is smaller then the amount of characters
 		if (limit <= (it->second).size()){
 			set<map<string, int>, CompareFrameTime2>::iterator it1 = (new_set).begin();
 			for (unsigned int i = 0; i < limit; i++){
@@ -36,6 +44,8 @@ void commandF(std::ostream& out, const map<string, set<map<string, int>, Compare
 				}
 				it1++;
 			}
+		// if the limit is greater then the amount of characters, then we just write out every 
+		// single character and their data
 		} else {
 			set<map<string, int>, CompareFrameTime2>::iterator it1;
 			for (it1 = (new_set).begin(); it1 != (new_set).end(); it1++){
@@ -45,11 +55,15 @@ void commandF(std::ostream& out, const map<string, set<map<string, int>, Compare
 			}
 		}
 }
+//Function for if the command is S, write the data to a outfile by passing the oufile as a reference.
+// First we find the move in the moves map, and then determine if the limit is smaller or greater then the
+// amount of characters. Then respectively write out the correct number of data
 void commandS(std::ostream& out, const map<string, set<map<string, int>, CompareFrameTime> >& moves, 
 	const string& moveName, unsigned int limit){
 		map<string, set<map<string, int>, CompareFrameTime> >::const_iterator it;
 		it = moves.find(moveName);
 		out << "-s " << moveName << " " << limit << endl;
+		//Iterate backwards to get the slowest moving characters
 		if (limit <= (it->second).size()){
 			set<map<string, int>, CompareFrameTime>::reverse_iterator it1 = (it->second).rbegin();
 			for (unsigned int i = 0; i < limit; i++){
@@ -67,6 +81,10 @@ void commandS(std::ostream& out, const map<string, set<map<string, int>, Compare
 			}
 		}
 }
+//Function for if the command is D, write the data to a outfile by passing the oufile as a reference.
+// Make a new set to store the characters that have the specified move frametime, then iterate through
+// the all the fighters to determine which fighter has that move frametime, if they do, put their name into
+// the new set. Then write it out.
 void commandD(std::ostream& out, const map<string, Fighter>& fighters, const string& moveName, int frameTime){
 	set<string, CompareName> characters;
 	for (map<string, Fighter>::const_iterator it = fighters.begin(); it != fighters.end(); it++){
@@ -106,14 +124,23 @@ int main(int argc, char** argv){
 	if(!outfile){
 		std::cerr << "Failed to open output " << argv[3] << " for writing." << std::endl;
 	}
-	map<string, Fighter> fighters;
+	//Initialize a map that has the character names as the keys and the Fighter objects as the values
+	//Used for easy accessing a specific fighters class profile
+	map<string, Fighter> fighters; 
+
+	//Initialize a map that has the move name as the keys and a set of another map has the values
+	// In the set, it contains each character and their respective move frametime in the form of a map.
+	// With the character name being the key value and the move frametime as the value value
+	// Use this to find the fastest and slowest frametimes per character for each move.
 	map<string, set<map<string, int>, CompareFrameTime> > moves;
 
+	//Initialize variables for reading
 	string charName, jab, forwardTilt, upTilt, downTilt, forwardSmash, upSmash, downSmash;
 	int jabT, forwardTiltT, upTiltT, downTiltT, forwardSmashT, upSmashT, downSmashT;
 
 	dbfile >> charName >> jab >> forwardTilt >> upTilt >> downTilt >> forwardSmash >> upSmash >> downSmash;
 
+	//Initialize each fighter object and all their move's frametimes. Then insert it into the fighters map.
 	while (dbfile >> charName){
 		dbfile >> jabT >> forwardTiltT >> upTiltT >> downTiltT >> forwardSmashT >> upSmashT >> downSmashT;
 		Fighter fighter(charName);
@@ -128,13 +155,17 @@ int main(int argc, char** argv){
 		fighters.insert(pair<string, Fighter>(charName, fighter));
 		
 	}
+	//Iterate through the fighters and add their move frametimes to the moves map
 	for (map<string, Fighter>::iterator it = fighters.begin(); it != fighters.end(); it++){
+		//Initialize the moves in the moves set
 		if (it == fighters.begin()){
 			(it->second).makeMoves(moves);
 			continue;
 		}
 		(it->second).addMoves(moves);
 	}
+
+	//Read in the command and run the respective functions to take care of the commands
 	string dashCommand, theMove;
 	int frameCount, limit;
 	while (infile >> dashCommand){
