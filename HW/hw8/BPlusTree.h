@@ -92,7 +92,7 @@ public:
 	BPlusTreeNode<T>* copy_tree(BPlusTreeNode<T>* old_root, BPlusTreeNode<T>* new_root) ;
 	void destroy_tree(BPlusTreeNode<T>* root);
 	void sort_keys(BPlusTreeNode<T>*& pos);
-	void split(const T& value, BPlusTreeNode<T>* pos);
+	void split(BPlusTreeNode<T>* pos);
 
 private:
 	BPlusTreeNode<T>* root;
@@ -156,7 +156,7 @@ void BPlusTree<T>::destroy_tree(BPlusTreeNode<T>* root){
 template <class T>
 void BPlusTree<T>::sort_keys(BPlusTreeNode<T>*& pos) {
 	unsigned int key_size = pos->keys.size();
-	for (unsigned int i; i < key_size - 1; i++){
+	for (unsigned int i = 0; i < key_size - 1; i++){
 		for (unsigned int j = i + 1; j < key_size; j++){
 			if (pos->keys[j] < pos->keys[i]){
 				if (j != i){
@@ -170,7 +170,7 @@ void BPlusTree<T>::sort_keys(BPlusTreeNode<T>*& pos) {
 	}
 }
 template <class T>
-void BPlusTree<T>::split(const T& value, BPlusTreeNode<T>* pos){
+void BPlusTree<T>::split(BPlusTreeNode<T>* pos){
 	BPlusTreeNode<T>* new_node1 = new BPlusTreeNode<T>();
 	BPlusTreeNode<T>* new_node2 = new BPlusTreeNode<T>();
 	
@@ -229,7 +229,7 @@ void BPlusTree<T>::insert(const T& value) {
 		pos->keys.push_back(value);
 		sort_keys(pos);
 		if (pos->keys.size() >= size){
-			split(value, pos);
+			split(pos);
 		}
 	} else {
 		root = new BPlusTreeNode<T>;
