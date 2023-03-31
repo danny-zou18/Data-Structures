@@ -225,6 +225,9 @@ void BPlusTree<T>::insert(const T& value) {
 		}
 	} else {
 		root = new BPlusTreeNode<T>;
+		for (unsigned int i = 0;i < size; i++){
+			root->children.push_back(nullptr);
+		}
 		root->keys.push_back(value);
 		return;
 	}
