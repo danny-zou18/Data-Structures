@@ -109,6 +109,25 @@ BPlusTree<T>::~BPlusTree(){
 	root = nullptr;
 }
 template <class T>
+BPlusTreeNode<T>* BPlusTree<T>::find(const T& value) const {
+	if (root == nullptr){
+		return nullptr;
+	}
+	BPlusTreeNode<T>* temp = root;
+	while (!temp->is_leaf()){
+		for (unsigned int i = 0; i < temp->keys.size(); i++){
+			if (value < (temp->keys)[i]){
+				return (temp->children)[i];
+			}
+		}
+		unsigned int next_index = temp->keys.size() - 1;
+		if (value > temp->keys[next_index]){
+			temp = temp->children[temp->keys.size()];
+		}
+	}
+	return temp;
+}
+template <class T>
 BPlusTreeNode<T>* BPlusTree<T>::copy_tree(BPlusTreeNode<T>* old_root, BPlusTreeNode<T>* parentNode){
 	if (old_root == nullptr){
 		return nullptr;
@@ -133,25 +152,7 @@ void BPlusTree<T>::destroy_tree(BPlusTreeNode<T>* root){
 	}
 	delete root;
 }
-template <class T>
-BPlusTreeNode<T>* BPlusTree<T>::find(const T& value) const {
-	if (root == nullptr){
-		return nullptr;
-	}
-	BPlusTreeNode<T>* temp = root;
-	while (!temp->is_leaf()){
-		for (unsigned int i = 0; i < temp->keys.size(); i++){
-			if (value < (temp->keys)[i]){
-				return (temp->children)[i];
-			}
-		}
-		unsigned int next_index = temp->keys.size() - 1;
-		if (value > temp->keys[next_index]){
-			temp = temp->children[temp->keys.size()];
-		}
-	}
-	return temp;
-}
+
 template <class T>
 void BPlusTree<T>::sort_keys(BPlusTreeNode<T>*& pos) {
 	unsigned int key_size = pos->keys.size();
@@ -185,6 +186,8 @@ void BPlusTree<T>::split(const T& value, BPlusTreeNode<T>* pos){
 	if (pos->children[0] == nullptr && pos->children[1] == nullptr 
 		&& pos->children[2] == nullptr && pos->parent == nullptr){
 			BPlusTreeNode<T>* top_node = new BPlusTreeNode<T>;
+			top_node->children.push_back(nullptr);
+			top_node->children.push_back(nullptr);
 			top_node->keys.push_back(pos->keys[size/2]);
 			top_node->children[0] = new_node1;
 			top_node->children[1] = new_node2;
@@ -194,6 +197,8 @@ void BPlusTree<T>::split(const T& value, BPlusTreeNode<T>* pos){
 			pos->children = top_node->children;
 	} else if (pos->parent == nullptr){
 			BPlusTreeNode<T>* top_node = new BPlusTreeNode<T>;
+			top_node->children.push_back(nullptr);
+			top_node->children.push_back(nullptr);
 			top_node->keys.push_back(pos->keys[size-1]);
 			BPlusTreeNode<T>* temp = new BPlusTreeNode<T>;
 			temp->keys.push_back(new_node1->keys[0]);
@@ -223,7 +228,7 @@ void BPlusTree<T>::insert(const T& value) {
 		BPlusTreeNode<T>* pos = find(value);
 		pos->keys.push_back(value);
 		sort_keys(pos);
-		if (pos->keys.size() + 1 >= size){
+		if (pos->keys.size() >= size){
 			split(value, pos);
 		}
 	} else {
