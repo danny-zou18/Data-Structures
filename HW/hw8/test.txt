@@ -1,0 +1,6 @@
+TemplateTest() complete!
+
+SmallTreeCopyTest() complete!
+
+EmptyTreeTest() complete!
+
