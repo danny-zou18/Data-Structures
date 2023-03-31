@@ -76,7 +76,9 @@
     "cinttypes": "cpp",
     "__verbose_abort": "cpp",
     "list": "cpp",
-    "map": "cpp"
+    "map": "cpp",
+    "__tree": "cpp",
+    "set": "cpp"
   },
   "files.autoSave": "afterDelay"
 }

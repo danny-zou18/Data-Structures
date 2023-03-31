@@ -70,6 +70,48 @@ bool BPlusTreeNode<T>::contains(const T& key,std::size_t low,std::size_t high){
 	}
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////
 //Your BPlusTree implementation goes below this point.
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -83,8 +125,8 @@ public:
 
 	//Accessors
 	BPlusTreeNode<T>* find(const T& value) const;
-	void print_sideways(std::ostream out) const;
-	void print_BFS(std::ostream out) const;
+	void print_sideways(std::ostream& out) const;
+	void print_BFS(std::ostream& out) const;
 	int get_size() const {return size;}
 
 	//Modifiers
@@ -92,11 +134,11 @@ public:
 	BPlusTreeNode<T>* copy_tree(BPlusTreeNode<T>* old_root, BPlusTreeNode<T>* new_root) ;
 	void destroy_tree(BPlusTreeNode<T>* root);
 	void sort_keys(BPlusTreeNode<T>*& pos);
-	void split(BPlusTreeNode<T>* pos);
-
 private:
 	BPlusTreeNode<T>* root;
 	unsigned int size;
+	void print_sideways(std::ostream& out, BPlusTreeNode<T>* p, unsigned int level) const;
+	void seperate(BPlusTreeNode<T>*& split_node);
 };
 template <class T>
 BPlusTree<T>::BPlusTree(const BPlusTree<T>& old){
@@ -112,21 +154,23 @@ template <class T>
 BPlusTreeNode<T>* BPlusTree<T>::find(const T& value) const {
 	if (root == nullptr){
 		return nullptr;
-	}
-	BPlusTreeNode<T>* temp = root;
-	while (!temp->is_leaf()){
-		for (unsigned int i = 0; i < temp->keys.size(); i++){
-			if (value < (temp->keys)[i]){
-				return (temp->children)[i];
+	} 
+	BPlusTreeNode<T>* pos = root;
+	while (!pos->is_leaf()){
+		for (unsigned int i = 0; i < pos->keys.size();i++){
+			if (value < pos->keys[i]){
+				BPlusTreeNode<T>* temp = pos->children[i];
+				if (temp->is_leaf()){
+					return temp;
+				}
 			}
 		}
-		unsigned int next_index = temp->keys.size() - 1;
-		if (value > temp->keys[next_index]){
-			temp = temp->children[temp->keys.size()];
+		if (value > pos->keys[size-2]){
+			pos = pos->children[size-1];
 		}
 	}
-	return temp;
-}
+	return pos;
+} 
 template <class T>
 BPlusTreeNode<T>* BPlusTree<T>::copy_tree(BPlusTreeNode<T>* old_root, BPlusTreeNode<T>* parentNode){
 	if (old_root == nullptr){
@@ -170,73 +214,149 @@ void BPlusTree<T>::sort_keys(BPlusTreeNode<T>*& pos) {
 	}
 }
 template <class T>
-void BPlusTree<T>::split(BPlusTreeNode<T>* pos){
-	BPlusTreeNode<T>* new_node1 = new BPlusTreeNode<T>();
-	BPlusTreeNode<T>* new_node2 = new BPlusTreeNode<T>();
-	
-	for (unsigned int i = 0; i < size; i++){
-		new_node1->children.push_back(nullptr);
-		new_node2->children.push_back(nullptr);
-		if (i < size/2){
-			new_node1->keys.push_back(pos->keys[i]);
-		} else {
-			new_node2->keys.push_back(pos->keys[i]);
-		}
-	}
-	if (pos->children[0] == nullptr && pos->children[1] == nullptr 
-		&& pos->children[2] == nullptr && pos->parent == nullptr){
-			BPlusTreeNode<T>* top_node = new BPlusTreeNode<T>;
-			top_node->children.push_back(nullptr);
-			top_node->children.push_back(nullptr);
-			top_node->keys.push_back(pos->keys[size/2]);
-			top_node->children[0] = new_node1;
-			top_node->children[1] = new_node2;
-			new_node1->parent = top_node;
-			new_node2->parent = top_node;
-			pos->keys = top_node->keys;
-			pos->children = top_node->children;
-	} else if (pos->parent == nullptr){
-			BPlusTreeNode<T>* top_node = new BPlusTreeNode<T>;
-			top_node->children.push_back(nullptr);
-			top_node->children.push_back(nullptr);
-			top_node->keys.push_back(pos->keys[size-1]);
-			BPlusTreeNode<T>* temp = new BPlusTreeNode<T>;
-			temp->keys.push_back(new_node1->keys[0]);
-			temp->parent = new_node1;
-			new_node1->children[0] = pos->children[0];
-			new_node1->children[1] = temp;
-			new_node2->children[0] = pos->children[1];
-			new_node2->children[1] = pos->children[2];
-			top_node->children[0] = new_node1;
-			top_node->children[1] = new_node2;
-			pos->keys = top_node->keys;
-			pos->children = top_node->children;
-			new_node1->parent = top_node;
-			new_node2->parent = top_node;
-	} else {
-		pos->parent->keys.push_back(pos->keys[size/2]);
-		new_node1->parent = pos->parent;
-		new_node2->parent = pos->parent;
-		pos->keys = pos->parent->keys;
-		pos->parent->children[1] = new_node1;
-		pos->parent->children[2] = new_node2;
-	}
-}
-template <class T>
 void BPlusTree<T>::insert(const T& value) {
 	if (root != nullptr){
-		BPlusTreeNode<T>* pos = find(value);
-		pos->keys.push_back(value);
-		sort_keys(pos);
-		if (pos->keys.size() >= size){
-			split(pos);
+		BPlusTreeNode<T>* insert_node = find(value);
+		if (insert_node->keys.size() >= size){
+			seperate(insert_node);
+		} else {
+			insert_node->keys.push_back(value);
+			sort_keys(insert_node);
 		}
 	} else {
 		root = new BPlusTreeNode<T>;
-		for (unsigned int i = 0; i < size; i++){
-			root->children.push_back(nullptr);
-		}
 		root->keys.push_back(value);
+		return;
+	}
+}
+template <class T>
+void BPlusTree<T>::print_sideways(std::ostream& out, BPlusTreeNode<T>* pos, unsigned int level) const {
+	 if (root == NULL) {
+        out << "Tree is empty." << std::endl;
+        return;
+    }
+    unsigned int left = pos->children.size() / 2;
+    unsigned int right = pos->children.size() - left;
+    
+    for (unsigned int i = 0; i < left; ++i){
+        print_sideways(out, pos->children[i], level + 1);
+	}
+    for (unsigned int i = 0; i < level; ++i) {
+		out << '\t';
+	}
+    out << pos->keys[0];
+    for (unsigned int i = 1; i < pos->keys.size(); ++i) {
+		out << ',' << pos->keys[i];
+	}
+    out << std::endl;
+    for (unsigned int i = left; i < left + right; ++i){
+        print_sideways(out, pos->children[i], level + 1);
+	}
+}
+template <class T>
+void BPlusTree<T>::print_sideways(std::ostream& out) const {
+	print_sideways(out, root, 0);
+}
+template <class T>
+void BPlusTree<T>::print_BFS(std::ostream& out) const {
+    // Check: If tree is empty
+    if (root == NULL) {
+        out << "Tree is empty." << std::endl;
+        return;
+    }
+    
+    // Initialize a FIFO queue
+    std::vector<BPlusTreeNode<T>*> queue;
+    queue.push_back(root);
+    std::vector<int> levels;
+    levels.push_back(0);
+    
+    int last_level = 0;
+    while (queue.size() != 0) {
+        // get and remove the first element from queue
+        BPlusTreeNode<T>* current(queue.front());
+        queue.erase(queue.begin());
+        int level(levels.front());
+        levels.erase(levels.begin());
+        
+        //spacing
+        if (level == last_level && level > 0) out << '\t';
+        else if (level != last_level) out << std::endl;
+        
+        // print key vector
+        out << current->keys[0];
+        for (unsigned int i = 1; i < current->keys.size(); ++i)
+            out << ',' << current->keys[i];
+        
+        // append current node's children to queue
+        for (unsigned int i = 0; i < current->children.size(); ++i) {
+            queue.push_back(current->children[i]);
+            levels.push_back(level + 1);
+        }
+        
+        last_level = level;
+    }
+    out << std::endl;
+}
+template <class T>
+void BPlusTree<T>::seperate(BPlusTreeNode<T>*& split_node) {
+	if (split_node->parent == nullptr && split_node->children[0] == nullptr){
+		BPlusTreeNode<T>* node1 = new BPlusTreeNode<T>;
+		BPlusTreeNode<T>* node2 = new BPlusTreeNode<T>;
+		BPlusTreeNode<T>* new_root = new BPlusTreeNode<T>;
+		node1->parent = new_root;
+		node2->parent = new_root;
+		new_root->keys.push_back(split_node->keys[size/2]);
+		new_root->children[0] = node1;
+		new_root->children[1] = node2;
+		split_node = new_root;
+	} else if (split_node->is_leaf()){
+		unsigned int split_index = split_node->keys.size() / 2;
+		std::vector<T> to_be_moved;
+		for (unsigned int i = 0; i < split_index; i++){
+			to_be_moved.push_back(split_node->keys[i]);
+		}
+		BPlusTreeNode<T>* new_node = new BPlusTreeNode<T>;
+		BPlusTreeNode<T>* temp_node = new BPlusTreeNode<T>;
+		for (unsigned int i = 0; i < to_be_moved.size(); i++){
+			new_node->keys.push_back(to_be_moved[i]);
+		}
+		split_node->parent->keys.push_back(split_node->keys[split_index]);
+		for (unsigned int i = to_be_moved.size(); i < split_node->keys.size(); i++){
+			temp_node->keys.push_back(split_node->keys[i]);
+		}
+		unsigned int insert_index = split_node->parent->children.size();
+		
+		split_node->parent->children[insert_index-2] = new_node;
+		split_node->parent->children[insert_index-1] = temp_node;
+		if (split_node->parent->keys.size() >= size){
+			seperate(split_node->parent);
+		}
+		if (split_node->parent->children[insert_index-2]->keys.size() >= size){
+			seperate(split_node->parent->children[insert_index-2]);
+		}
+	} else if (split_node->parent == nullptr){
+		BPlusTreeNode<T>* node1 = new BPlusTreeNode<T>;
+		BPlusTreeNode<T>* node2 = new BPlusTreeNode<T>;
+		BPlusTreeNode<T>* new_root = new BPlusTreeNode<T>;
+		node1->keys.push_back(split_node->keys.front());
+		node2->keys.push_back(split_node->keys.back());
+		unsigned int split_children = split_node->children.size() / 2;
+		unsigned int split_children2 = split_node->children.size() - split_children;
+		for (unsigned int i = 0; i < split_children; i++){
+			node1->children[i] = split_node->children[i];
+			split_node->children[i]->parent = node1;
+		}
+		for (unsigned int i = 0; i < split_children2; i++){
+			unsigned int temp = split_children + i;
+			node2->children[i] = split_node->children[temp];
+			split_node->children[temp]->parent = node2;
+		}
+		new_root->children[0] = node1;
+		new_root->children[1] = node2;
+		node1->parent = new_root;
+		node2->parent = new_root;
+		split_node = new_root;
 	}
 }
 #endif

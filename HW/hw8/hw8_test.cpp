@@ -114,10 +114,10 @@ void SmallTreeCopyTest(){
 }
 
 void EmptyTreeTest(std::ofstream& outfile){
-	// BPlusTree<std::string> b(127);
-	// b.print_sideways(outfile);
-	// b.print_BFS(outfile);
-	// assert(!b.find("a"));
+	BPlusTree<std::string> b(127);
+	b.print_sideways(outfile);
+	b.print_BFS(outfile);
+	assert(!b.find("a"));
 }
 
 void RealTreeTestNoPrint(){
@@ -132,6 +132,7 @@ void RealTreeTestNoPrint(){
 	for(int i=1; i<=6; i++){
 		assert(b1.find(i));
 		for(int j=1; j<=6; j++){
+			//std::cout << "true" << std::endl;
 			if(i!=j){
 				if(i<5 || j<5){
 					assert(!b1.find(i)->contains(j));
@@ -166,14 +167,14 @@ void RealTreeTestPrint(std::ofstream& outfile){
 		b2.insert(7-i);
 	}
 
-	// b1.print_sideways(outfile);
-	// outfile << std::endl;
-	// b1.print_BFS(outfile);
-	// outfile << std::endl;
-	// b2.print_sideways(outfile);
-	// outfile << std::endl;
-	// b2.print_BFS(outfile);
-	// outfile << std::endl;
+	b1.print_sideways(outfile);
+	outfile << std::endl;
+	b1.print_BFS(outfile);
+	outfile << std::endl;
+	b2.print_sideways(outfile);
+	outfile << std::endl;
+	b2.print_BFS(outfile);
+	outfile << std::endl;
 }
 
 void ExtraCreditTest(std::ofstream& outfile){
