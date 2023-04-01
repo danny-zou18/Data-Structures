@@ -135,6 +135,7 @@ void RealTreeTestNoPrint(){
 			//std::cout << "true" << std::endl;
 			if(i!=j){
 				if(i<5 || j<5){
+					
 					assert(!b1.find(i)->contains(j));
 				}
 				else{

@@ -70,48 +70,6 @@ bool BPlusTreeNode<T>::contains(const T& key,std::size_t low,std::size_t high){
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ///////////////////////////////////////////////////////////////////////////////////////
 //Your BPlusTree implementation goes below this point.
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -137,6 +95,7 @@ public:
 private:
 	BPlusTreeNode<T>* root;
 	unsigned int size;
+	//Private helper functions
 	void print_sideways(std::ostream& out, BPlusTreeNode<T>* p, unsigned int level) const;
 	void seperate(BPlusTreeNode<T>*& split_node);
 };
@@ -145,35 +104,40 @@ BPlusTree<T>::BPlusTree(const BPlusTree<T>& old){
 	size = old.get_size();
 	root = copy_tree(old.root,nullptr);
 }
+//Deconstructor
 template <class T>
 BPlusTree<T>::~BPlusTree(){
 	destroy_tree(root);
 	root = nullptr;
 }
+//Find function that finds a given value in the B+ tree
 template <class T>
 BPlusTreeNode<T>* BPlusTree<T>::find(const T& value) const {
-	if (root == nullptr){
+	if (root == nullptr){ //If the tree is empty
 		return nullptr;
-	} 
+	}
 	BPlusTreeNode<T>* pos = root;
-	while (!pos->is_leaf()){
+	//While we have not reached the leaf level, look for the node that contains it
+	while (!pos->is_leaf()){ 
 		for (unsigned int i = 0; i < pos->keys.size();i++){
-			if (value < pos->keys[i]){
+			if (value < pos->keys[i]){ //When the value is found, check if is a leaf, if it is, return the node
 				BPlusTreeNode<T>* temp = pos->children[i];
 				if (temp->is_leaf()){
 					return temp;
 				}
 			}
 		}
+		//Check for the right most leaf node
 		if (value > pos->keys[size-2]){
 			pos = pos->children[size-1];
 		}
 	}
 	return pos;
 } 
+//Recursive helper function for the copy constructor, copies the tree exactly into another empty tree
 template <class T>
 BPlusTreeNode<T>* BPlusTree<T>::copy_tree(BPlusTreeNode<T>* old_root, BPlusTreeNode<T>* parentNode){
-	if (old_root == nullptr){
+	if (old_root == nullptr){ //Base Case
 		return nullptr;
 	}
 	BPlusTreeNode<T>* tempNode = new BPlusTreeNode<T>();
@@ -186,6 +150,7 @@ BPlusTreeNode<T>* BPlusTree<T>::copy_tree(BPlusTreeNode<T>* old_root, BPlusTreeN
 	}
 	return tempNode;
 }
+//Recursive helper function for the deconstructor, deletes every node and all the allocated memory along in the tree
 template <class T>
 void BPlusTree<T>::destroy_tree(BPlusTreeNode<T>* root){
 	if (root == nullptr){
@@ -196,7 +161,7 @@ void BPlusTree<T>::destroy_tree(BPlusTreeNode<T>* root){
 	}
 	delete root;
 }
-
+//Helper function to help sort all the keys in each node
 template <class T>
 void BPlusTree<T>::sort_keys(BPlusTreeNode<T>*& pos) {
 	unsigned int key_size = pos->keys.size();
@@ -213,17 +178,21 @@ void BPlusTree<T>::sort_keys(BPlusTreeNode<T>*& pos) {
 		}
 	}
 }
+//Insert function that inserts a given value at the right place.
 template <class T>
 void BPlusTree<T>::insert(const T& value) {
-	if (root != nullptr){
-		BPlusTreeNode<T>* insert_node = find(value);
+	if (root != nullptr){ //If there is already a value
+		//Find where to insert the value then check if when inserting it, the keys size exceeds the allowed
+		//limit, if it does, call the seperate function that seperates the nodes according
+		BPlusTreeNode<T>* insert_node = find(value); 
 		if (insert_node->keys.size() >= size){
 			seperate(insert_node);
 		} else {
 			insert_node->keys.push_back(value);
 			sort_keys(insert_node);
 		}
-	} else {
+		//If there is no value or node yet, make a new node and put the given value in it to initialize the tree
+	} else { 
 		root = new BPlusTreeNode<T>;
 		for (unsigned int i = 0;i < size; i++){
 			root->children.push_back(nullptr);
@@ -232,6 +201,7 @@ void BPlusTree<T>::insert(const T& value) {
 		return;
 	}
 }
+//recursive print function that prints the tree sideways
 template <class T>
 void BPlusTree<T>::print_sideways(std::ostream& out, BPlusTreeNode<T>* pos, unsigned int level) const {
 	 if (root == NULL) {
@@ -260,59 +230,45 @@ template <class T>
 void BPlusTree<T>::print_sideways(std::ostream& out) const {
 	print_sideways(out, root, 0);
 }
+//Print in Breadth-First traversal
 template <class T>
 void BPlusTree<T>::print_BFS(std::ostream& out) const {
     // Check: If tree is empty
-    if (root == NULL) {
+    if (root == nullptr) {
         out << "Tree is empty." << std::endl;
         return;
     }
-    
-    // Initialize a FIFO queue
-    std::vector<BPlusTreeNode<T>*> queue;
-    queue.push_back(root);
-    std::vector<int> levels;
-    levels.push_back(0);
-    
-    int last_level = 0;
-    while (queue.size() != 0) {
-        // get and remove the first element from queue
-        BPlusTreeNode<T>* current(queue.front());
-        queue.erase(queue.begin());
-        int level(levels.front());
-        levels.erase(levels.begin());
-        
-        //spacing
-        if (level == last_level && level > 0) out << '\t';
-        else if (level != last_level) out << std::endl;
-        
-        // print key vector
-        out << current->keys[0];
-        for (unsigned int i = 1; i < current->keys.size(); ++i)
-            out << ',' << current->keys[i];
-        
-        // append current node's children to queue
-        for (unsigned int i = 0; i < current->children.size(); ++i) {
-            queue.push_back(current->children[i]);
-            levels.push_back(level + 1);
-        }
-        
-        last_level = level;
-    }
-    out << std::endl;
 }
+//Function that seperates a node if there are too many keys and ties everything up accoring
 template <class T>
 void BPlusTree<T>::seperate(BPlusTreeNode<T>*& split_node) {
-	if (split_node->parent == nullptr && split_node->children[0] == nullptr){
+	//If there is only one node in the tree and it needs to be seperated
+	if (split_node->parent == nullptr && split_node->children[0] == nullptr){ 
+		//Initialize new nodes
 		BPlusTreeNode<T>* node1 = new BPlusTreeNode<T>;
 		BPlusTreeNode<T>* node2 = new BPlusTreeNode<T>;
 		BPlusTreeNode<T>* new_root = new BPlusTreeNode<T>;
+		//Initialize memory spaces
+		new_root->children.push_back(nullptr);
+		new_root->children.push_back(nullptr);
+		//Set the parent of both bottom nodes to the top node
 		node1->parent = new_root;
 		node2->parent = new_root;
-		new_root->keys.push_back(split_node->keys[size/2]);
+		//Put the correct values in each of the bottom nodes
+		unsigned int split_index = split_node->keys.size()/2;
+		unsigned int split_index2 = split_node->keys.size() - split_index;
+		new_root->keys.push_back(split_node->keys[split_index]);
+		for (unsigned int i = 0; i < split_index; i++){
+			node1->keys.push_back(split_node->keys[i]);
+		}
+		for (unsigned int i = 0; i < split_index2; i++){
+			unsigned int temp = split_index + i;
+			node2->keys.push_back(split_node->keys[temp]);
+		}
 		new_root->children[0] = node1;
 		new_root->children[1] = node2;
 		split_node = new_root;
+		//If what is being seperated is a leaf node
 	} else if (split_node->is_leaf()){
 		unsigned int split_index = split_node->keys.size() / 2;
 		std::vector<T> to_be_moved;
@@ -338,10 +294,13 @@ void BPlusTree<T>::seperate(BPlusTreeNode<T>*& split_node) {
 		if (split_node->parent->children[insert_index-2]->keys.size() >= size){
 			seperate(split_node->parent->children[insert_index-2]);
 		}
+		//If what is being seperated is a middle or top node
 	} else if (split_node->parent == nullptr){
 		BPlusTreeNode<T>* node1 = new BPlusTreeNode<T>;
 		BPlusTreeNode<T>* node2 = new BPlusTreeNode<T>;
 		BPlusTreeNode<T>* new_root = new BPlusTreeNode<T>;
+		new_root->children.push_back(nullptr);
+		new_root->children.push_back(nullptr);
 		node1->keys.push_back(split_node->keys.front());
 		node2->keys.push_back(split_node->keys.back());
 		unsigned int split_children = split_node->children.size() / 2;
