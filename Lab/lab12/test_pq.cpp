@@ -77,7 +77,7 @@ int main() {
             << "and check_heap returns " << pq_float.check_heap() << std::endl;
   
 
-  /*
+  
   std::cout << "\n\n"
             << "****************\n"
             << "* Checkpoint 3 *\n"
@@ -98,7 +98,7 @@ int main() {
   v.clear();
   heap_sort(v);
   std::cout << "produces a vector that is " << (v.empty() ? "empty" : "NOT empty") << std::endl;
-  */
+  
   
   return 0;
 }

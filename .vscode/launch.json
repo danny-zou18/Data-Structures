@@ -4,9 +4,9 @@
       "type": "lldb",
       "request": "launch",
       "name": "Launch",
-      "program": "${workspaceFolder}/HW/hw8/a.out",
-      "args": ["test.txt"],
-      "cwd": "${workspaceFolder}/HW/hw8"
+      "program": "${workspaceFolder}/Lab/lab12/a.out",
+      "args": [],
+      "cwd": "${workspaceFolder}/Lab/lab12"
     }
   ]
 }

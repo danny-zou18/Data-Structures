@@ -49,7 +49,7 @@ public:
         m_heap[0] = m_heap[m_heap.size() - 1];
         m_heap.pop_back();
 
-        unsigned int size = m_heap.size() - 1;
+        unsigned int size = m_heap.size();
         unsigned int current = 0;
         while (current * 2 + 1 < size){
           unsigned int temp;
@@ -115,7 +115,45 @@ public:
 template <class T>
 void heap_sort( std::vector<T> & v )
 {
-   
+    if (v.size() <= 1) {
+      return;
+    }
+ 
+    const unsigned int size = v.size();
+    for (int i = size / 2 - 1; i >= 0; --i) {
+        unsigned int parent = i;
+        unsigned int temp = parent * 2 + 1;
+        while (temp < size) {
+            if (temp + 1 < size && v[temp] < v[temp + 1]) {
+                temp += 1;
+            }
+            if (v[parent] < v[temp]) {
+                std::swap(v[parent], v[temp]);
+                parent = temp;
+                temp = parent * 2 + 1;
+            } else {
+                break;
+            }
+        }
+    }
+    
+    for (unsigned int i = size - 1; i > 0; --i) {
+        std::swap(v[0], v[i]);
+        unsigned int parent = 0;
+        unsigned int temp = parent * 2 + 1;
+        while (temp < i) {
+            if (temp + 1 < i && v[temp] < v[temp + 1]) {
+              temp += 1;
+            }
+            if (v[parent] < v[temp]) {
+                std::swap(v[parent], v[temp]);
+                parent = temp;
+                temp = parent * 2 + 1;
+            } else {
+              break;
+            }
+        }
+    }
 }
 
 #endif
