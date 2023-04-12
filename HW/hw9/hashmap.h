@@ -96,6 +96,9 @@ void hashmap<HashFunc>::insert(const string& key, unsigned int position){
                     break;
                 }
                 index += 1;
+                if (index == m_table.size()){
+                    index = 0;
+                }
             }
         }
         if (!found && m_table[index].first == ""){
