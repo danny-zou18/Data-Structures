@@ -4,6 +4,7 @@
 
 // simple homemade smart pointers
 #include "ds_smart_pointers.h"
+#include <set>
 
 
 // ====================================================
@@ -63,6 +64,22 @@ private:
 
 // ====================================================
 // ====================================================
+void deleteAll(Balloon* root, const Balloon* curr){
+  if(curr->getName()!=root->getName()){
+    for(int i = 0; i < curr->numRopes(); i++){
+      deleteAll(root,curr->getRope(i));
+    }
+    delete curr;
+  }
+}
+
+
+void deleteAll(Balloon* b) {
+  for(int i = 0; i < b->numRopes(); i++){
+    deleteAll(b,b->getRope(i));
+  }
+  delete b;
+}
 
 int main() {
 
@@ -87,7 +104,7 @@ int main() {
   //
   // CHECKPOINT 2A: INSERT NECESSARY EXPLICIT DEALLOCATION
   //
-
+  delete alice;
 
   
   // ====================================================
@@ -103,13 +120,14 @@ int main() {
   fred = NULL;
   elaine = cathy;
   cathy = NULL;
-  
-
 
   //
   // CHECKPOINT 2B: INSERT NECESSARY EXPLICIT DEALLOCATION
   //
-
+  delete cathy;
+  delete elaine;
+  delete daniel;
+  delete fred;
 
 
   daniel = NULL;
@@ -134,18 +152,21 @@ int main() {
   // SHARED POINTERS WITH INTERCONNECTED STRUCTURES
   // ====================================================
 
-  Balloon* georgette(new Balloon("Mr Potato Head"));
+  dsSharedPtr<Balloon> georgette(new Balloon("Mr Potato Head"));
   Balloon* henry(new Balloon("Snoopy"));
-
+  dsSharedPtr<Balloon> tmp1(henry);
   georgette->addRope(henry);
   henry = new Balloon("Tigger");
+  dsSharedPtr<Balloon> tmp(henry);
   georgette->addRope(henry);
   georgette->print();
   henry->print();
   
   Balloon* isabelle(new Balloon("Shrek"));
+  dsSharedPtr<Balloon> temp1(isabelle);
   henry->addRope(isabelle);
   isabelle = new Balloon("Barney the Purple Dinosaur");
+  dsSharedPtr<Balloon> temp(isabelle);
   georgette->addRope(isabelle);
 
   henry->print();
@@ -167,7 +188,7 @@ int main() {
   // FOR CHECKPOINT 3
 
 
-  /*
+  
   Balloon* jacob(new Balloon("Dora the Explorer"));
   Balloon* katherine(new Balloon("Kung Fu Panda"));
   Balloon* larry(new Balloon("Scooby Doo"));
@@ -192,7 +213,7 @@ int main() {
   deleteAll(jacob);
   
   jacob = NULL;
-  */
+  
 
 
 
