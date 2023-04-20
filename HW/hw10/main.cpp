@@ -3,11 +3,12 @@
 #include <vector>
 #include <iostream>
 #include <utility>  
+#include <set>
 
 #include "image.h"
 #include "priority_queue.h"
 
-using std::cout; using std::endl; using std::vector; using std::pair;
+using std::cout; using std::endl; using std::vector; using std::pair; using std::set;
 
 // ===================================================================================================
 
@@ -19,6 +20,27 @@ double FastMarchingMethod(Image<Color> &input, Image<DistancePixel> &distance_im
 // visualization style helper functions
 Color Rainbow(double distance, double max_distance);
 Color GreyBands(double distance, double max_distance, int num_bands);
+
+pair<int,int> getDyDx(const unsigned int direction) {
+    if (direction == 1){
+        return std::make_pair(0,1);
+    } else if (direction == 2){
+        return std::make_pair(-1,1);
+    } else if (direction == 3){
+        return std::make_pair(-1,0);
+    } else if (direction == 4){
+        return std::make_pair(-1,-1);
+    } else if (direction == 5){
+        return std::make_pair(0,-1);
+    } else if (direction == 6){
+        return std::make_pair(1,-1);
+    } else if (direction == 7){
+        return std::make_pair(1,0);
+    } else if (direction == 8){
+        return std::make_pair(1,1);
+    }
+    return std::make_pair(0,0);
+}
 
 // ===================================================================================================
 
@@ -165,20 +187,51 @@ double FastMarchingMethod(Image<Color> &input, Image<DistancePixel> &distance_im
     for (int j = 0; j < h; j++){
       const Color& c = input.GetPixel(i,j);
       DistancePixel* pixel = &distance_image.GetPixel(i,j);
+      pixel->setX(j); pixel->setY(i);
       if (c.isBlack()){
         pixel->setValue(0);
-        cout << pixel->getValue() << endl;
         b_pixels.push_back(pixel);
       } else {
         pixel->setValue(999999);
       }
     }
   }
-  vector<DistancePixel*> pixels;
+  set<DistancePixel*> pixels;
+  for (unsigned int i = 0; i < b_pixels.size(); i++){
+    int cur_x = b_pixels[i]->getX();
+    int cur_y = b_pixels[i]->getY();
+    for (int d = 1; d <= 8; d++){
+      pair<int,int> direction = getDyDx(d);
+      int next_x = cur_x + direction.first;
+      int next_y = cur_y + direction.second;
+      if (next_x < 0 || next_y < 0 || next_x > w - 1 || next_y > h - 1){
+        continue;
+      }
+      const Color& c = input.GetPixel(next_y,next_x);
+      if (c.isBlack()){
+        continue;
+      }
+      DistancePixel* pixel = &distance_image.GetPixel(next_y, next_x);
+      pixel->setX(next_x); pixel->setY(next_y);
+      double distance = sqrt((cur_x - next_x) * (cur_x - next_x) + (cur_y - next_y) * (cur_y - next_y));
+      if (pixel->getValue() > distance){
+        pixel->setValue(b_pixels[i]->getValue() + distance);
+      }
+      if (pixels.find(pixel) == pixels.end()){
+        pixels.insert(pixel);
+      } else {
+        continue;
+      }
+    } 
+  }
+  set<DistancePixel*>::iterator it;
+  vector<DistancePixel*> vec_pixels;
+  for (it = pixels.begin(); it != pixels.end(); it++){
+    vec_pixels.push_back(*it);
+    //cout << (*it)->getX() << " " << (*it)->getY() << endl;
+  }
+  DistancePixel_PriorityQueue heap(vec_pixels);
   
-
-  
-
 }
 
 // ===================================================================================================

@@ -25,17 +25,17 @@ vector<int> getDyDx(const unsigned int direction) {
         return right;
     } else if (direction == 2){
         vector<int> bottom_right;
-        bottom_right.push_back(1);
+        bottom_right.push_back(-1);
         bottom_right.push_back(1);
         return bottom_right;
     } else if (direction == 3){
         vector<int> bottom;
-        bottom.push_back(1);
+        bottom.push_back(-1);
         bottom.push_back(0);
         return bottom;
     } else if (direction == 4){
         vector<int> bottom_left;
-        bottom_left.push_back(1);
+        bottom_left.push_back(-1);
         bottom_left.push_back(-1);
         return bottom_left;
     } else if (direction == 5){
@@ -45,17 +45,17 @@ vector<int> getDyDx(const unsigned int direction) {
         return left;
     } else if (direction == 6){
         vector<int> top_left;
-        top_left.push_back(-1);
+        top_left.push_back(1);
         top_left.push_back(-1);
         return top_left;
     } else if (direction == 7){
         vector<int> top;
-        top.push_back(-1);
+        top.push_back(1);
         top.push_back(0);
         return top;
     } else if (direction == 8){
         vector<int> top_right;
-        top_right.push_back(-1);
+        top_right.push_back(1);
         top_right.push_back(1);
         return top_right;
     }

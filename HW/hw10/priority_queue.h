@@ -28,7 +28,6 @@ class DistancePixel_PriorityQueue {
   // construct a heap from a vector of data
   DistancePixel_PriorityQueue(const std::vector<DistancePixel*> &values) {
     for (unsigned int i = 0; i < values.size(); i++){
-      backpointers.insert(std::make_pair(values[i],i));
       push(values[i]);
     }
   }
@@ -43,6 +42,7 @@ class DistancePixel_PriorityQueue {
   bool has_right_child(int i) { return (2*i)+2 < size(); }
   int get_left_child(int i) { assert (i >= 0 && has_left_child(i)); return 2*i + 1; }
   int get_right_child(int i) { assert (i >= 0 && has_right_child(i)); return 2*i + 2; }
+   std::vector<DistancePixel*> get_heap() const {return m_heap;}
 
   // read the top element
   const DistancePixel* top() const  {
