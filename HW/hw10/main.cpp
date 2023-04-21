@@ -21,6 +21,7 @@ double FastMarchingMethod(Image<Color> &input, Image<DistancePixel> &distance_im
 Color Rainbow(double distance, double max_distance);
 Color GreyBands(double distance, double max_distance, int num_bands);
 
+//Helper function that returns a pair based on the direction we want
 pair<int,int> getDyDx(const unsigned int direction) {
     if (direction == 1){
         return std::make_pair(0,1);
@@ -137,25 +138,27 @@ double NaiveDistanceFieldMethod(Image<Color> &input, Image<DistancePixel> &dista
     }
   }
   return answer;
-  
 }
-
 
 double ImprovedDistanceFieldMethod(Image<Color> &input, Image<DistancePixel> &distance_image) {
   int w = input.Width();
   int h = input.Height();
-
   double answer = 0;
-
-  vector<pair<int, int> > cords;
+  //Create a vector that contains all the black pixels in the image
+  vector<DistancePixel* > cords;
   for (int i = 0; i < w; i++){
     for (int j = 0; j < h; j++){
       const Color& c = input.GetPixel(i,j);
       if (c.isBlack()){
-        cords.push_back(std::make_pair(i,j));
+        DistancePixel* pixel = &distance_image.GetPixel(i,j);
+        pixel->setX(i); pixel->setY(j);
+        pixel->setValue(0);
+        cords.push_back(pixel);
       }
     }
   }
+  //Loop through every single pixel and compare it with every single black pixel to find the shortest distance
+  //to all of them, then set the distance value for that pixel
   for (int i = 0; i < w; i++){
     for (int j = 0; j < h; j++){
       double closest = -1;
@@ -163,17 +166,18 @@ double ImprovedDistanceFieldMethod(Image<Color> &input, Image<DistancePixel> &di
       if (p.isBlack()){
         continue;
       }
-      double temp = 3294;
+      //Compare with every single black pixel and find the smallest distance
       for (unsigned int z = 0; z < cords.size(); z++){
-        double distance = sqrt((i-cords[z].first) * (i-cords[z].first) + (j-cords[z].second) * (j-cords[z].second));
-        temp = std::min(distance, temp);
+        double distance = sqrt((i-cords[z]->getX()) * (i-cords[z]->getX()) + (j-cords[z]->getY()) * (j-cords[z]->getY()));
+        if (closest < 0 || distance < closest) {
+          closest = distance;
+        }
       }
-      if (closest < 0 || temp < closest) {
-	      closest = temp;
-	    }
+      //Find the biggest smallest distance
+      assert (closest >= 0);
       answer = std::max(answer, closest);
       DistancePixel& pixel = distance_image.GetPixel(i,j);
-      pixel.setValue(answer);
+      pixel.setValue(closest);
     }
   }
   return answer;
@@ -182,6 +186,7 @@ double ImprovedDistanceFieldMethod(Image<Color> &input, Image<DistancePixel> &di
 double FastMarchingMethod(Image<Color> &input, Image<DistancePixel> &distance_image) {
   int w = input.Width();
   int h = input.Height();
+  //First  we want to find all the black pixels, storing all of them in a vector
   vector<DistancePixel*> b_pixels;
   for (int i = 0; i < w; i++){
     for (int j = 0; j < h; j++){
@@ -192,16 +197,21 @@ double FastMarchingMethod(Image<Color> &input, Image<DistancePixel> &distance_im
         pixel->setValue(0);
         b_pixels.push_back(pixel);
       } else {
-        pixel->setValue(999999);
+        //Initialize a huge number for non black pixels
+        pixel->setValue(99999999999);
       }
     }
   }
+  //Create a set that contains all the pixels that surrouds the black pixels
   set<DistancePixel*> pixels;
   for (unsigned int i = 0; i < b_pixels.size(); i++){
-    int cur_x = b_pixels[i]->getX();
+    //Get current coordinates 
+    int cur_x = b_pixels[i]->getX(); 
     int cur_y = b_pixels[i]->getY();
+    //Loop through all 8 eight possible directions 
     for (int d = 1; d <= 8; d++){
       pair<int,int> direction = getDyDx(d);
+      //Get next coordinates
       int next_x = cur_x + direction.first;
       int next_y = cur_y + direction.second;
       if (next_x < 0 || next_y < 0 || next_x > w - 1 || next_y > h - 1){
@@ -213,10 +223,12 @@ double FastMarchingMethod(Image<Color> &input, Image<DistancePixel> &distance_im
       }
       DistancePixel* pixel = &distance_image.GetPixel(next_y, next_x);
       pixel->setX(next_x); pixel->setY(next_y);
+      //Calculate distance and set it to the pixel if the value is smaller
       double distance = sqrt((cur_x - next_x) * (cur_x - next_x) + (cur_y - next_y) * (cur_y - next_y));
       if (pixel->getValue() > distance){
         pixel->setValue(b_pixels[i]->getValue() + distance);
       }
+      //If pixel is not in the set yet, insert it
       if (pixels.find(pixel) == pixels.end()){
         pixels.insert(pixel);
       } else {
@@ -226,12 +238,51 @@ double FastMarchingMethod(Image<Color> &input, Image<DistancePixel> &distance_im
   }
   set<DistancePixel*>::iterator it;
   vector<DistancePixel*> vec_pixels;
+  //Push back every single pixel in the set to a vector so we can initialize a heap using its constructor
   for (it = pixels.begin(); it != pixels.end(); it++){
     vec_pixels.push_back(*it);
-    //cout << (*it)->getX() << " " << (*it)->getY() << endl;
   }
   DistancePixel_PriorityQueue heap(vec_pixels);
-  
+  //Keep fast marching until there is only one element left in the queue, which will have our biggest value
+  while (heap.size() != 1){
+    const DistancePixel* top = heap.top();
+    heap.pop();
+    int cur_x = top->getX();
+    int cur_y = top->getY();
+    //Loop through all 8 directions
+    for (int d = 1; d <= 8; d++){
+      pair<int,int> direction = getDyDx(d);
+      int next_x = cur_x + direction.first;
+      int next_y = cur_y + direction.second;
+      if (next_x < 0 || next_y < 0 || next_x > w - 1 || next_y > h - 1){
+        continue;
+      }
+      DistancePixel* pixel = &distance_image.GetPixel(next_y, next_x);
+      //If the pixel value is 1, then we know that its the shortest possible distance, skip
+      //If the pixel value is 0, then it is a known black pixel, skip
+      if (pixel->getValue() == 1 || pixel->getValue() == 0){
+        continue;
+      }
+      //If the value of the pixel is the set huge number, we know that it has no known estimated distance,
+      //Calculate the correct estimated distance, then insert to priority queue
+      double distance = sqrt((cur_x - next_x) * (cur_x - next_x) + (cur_y - next_y) * (cur_y - next_y));
+      double value = top->getValue() + distance;
+      if (!heap.in_heap(pixel) && value < pixel->getValue()){
+        pixel->setValue(value);
+        heap.push(pixel);
+      } else {
+         if (pixel->getValue() > value){
+            pixel->setValue(value);
+          //Update the position if the value is changed
+            heap.update_position(pixel);
+          }
+      }
+
+    }
+  }
+  const DistancePixel* top = heap.top();
+  double answer = top->getValue();
+  return answer;
 }
 
 // ===================================================================================================

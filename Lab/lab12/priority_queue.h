@@ -67,8 +67,6 @@ public:
             break;
           }
         }  
-
-
     }
     
     const unsigned int size() const { return m_heap.size(); }

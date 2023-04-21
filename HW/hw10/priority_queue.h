@@ -42,7 +42,6 @@ class DistancePixel_PriorityQueue {
   bool has_right_child(int i) { return (2*i)+2 < size(); }
   int get_left_child(int i) { assert (i >= 0 && has_left_child(i)); return 2*i + 1; }
   int get_right_child(int i) { assert (i >= 0 && has_right_child(i)); return 2*i + 2; }
-   std::vector<DistancePixel*> get_heap() const {return m_heap;}
 
   // read the top element
   const DistancePixel* top() const  {
@@ -93,10 +92,15 @@ class DistancePixel_PriorityQueue {
   std::map<DistancePixel*,int> backpointers;
 
   // private helper functions
+  //Basic percolate up function that I used in my lab, only difference being
+  //having to change the backpointers map to contain the correct indices
   void percolate_up(int i) {
     while(i != 0){
-      int parent = get_parent(i);
+      int parent = get_parent(i) ;
       if (m_heap[i]->getValue() < m_heap[parent]->getValue()){
+        int temp = backpointers[m_heap[i]];
+        backpointers[m_heap[i]] = backpointers[m_heap[parent]];
+        backpointers[m_heap[parent]] = temp;
         std::swap(m_heap[i],m_heap[parent]);
         i = parent;
       } else {
@@ -104,20 +108,22 @@ class DistancePixel_PriorityQueue {
       }
     }
   }
-  
+  //Basic percolate down function that I used in my lab, only difference being
+  //having to change the backpointers map to contain the correct indices
   void percolate_down(int i) {
-    int size = m_heap.size();
-
-    while (get_left_child(i) < size){
+    while (has_left_child(i) && has_right_child(i)){ 
       int temp;
       int left = m_heap[get_left_child(i)]->getValue();
       int right = m_heap[get_right_child(i)]->getValue();
-      if (get_right_child(i) < size && right < left){
+      if (has_right_child(i) && right < left){
         temp = get_right_child(i);
       } else {
         temp = get_left_child(i);
       }
       if (m_heap[temp]->getValue() < m_heap[i]->getValue()){
+        int temp1 = backpointers[m_heap[temp]];
+        backpointers[m_heap[temp]] = backpointers[m_heap[i]];
+        backpointers[m_heap[i]] = temp1;
         std::swap(m_heap[temp],m_heap[i]);
         i = temp;
       } else {

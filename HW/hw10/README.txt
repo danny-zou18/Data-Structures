@@ -30,7 +30,7 @@ small_10x10.ppm : 0.00s user 0.00s system 57% cpu 0.006 total
 squiggle_30x30.ppm : 0.02s user 0.00s system 93% cpu 0.022 total
 lines_100x100.ppm : 0.67s user 0.00s system 99% cpu 0.674 total
 data_structures_300x300.ppm : 52.81s user 0.09s system 99% cpu 52.904 total
-dots_1000x1000.ppm : 
+dots_1000x1000.ppm : Took too long, past 30 minutes, stopped the program since PC was burning hot
 
 
 Discussion:
@@ -49,7 +49,7 @@ small_10x10.ppm : 0.00s user 0.00s system 58% cpu 0.004 total
 squiggle_30x30.ppm : 0.00s user 0.00s system 63% cpu 0.010 total
 lines_100x100.ppm : 0.06s user 0.00s system 96% cpu 0.062 total
 data_structures_300x300.ppm : 5.80s user 0.01s system 99% cpu 5.818 total
-dots_1000x1000.ppm : 
+dots_1000x1000.ppm : Took too long, past 30 minutes, stopped the program since PC was burning hot
 
 Discussion:
 Looking at the timing experiment data for the improved algorithm, it is noticeably way faster than the naive algorithm. Except 
@@ -60,18 +60,25 @@ really figure out how many black pixels each image has.
 
 FAST MARCHING METHOD (with a map):
 
-Order Notation:
+Order Notation: O(w*h + log(w) * log(h) * lop(p))
 
 Timing Experiment Data:
+tiny_5x5.ppm : 0.00s user 0.00s system 2% cpu 0.252 total
+small_10x10.ppm : 0.00s user 0.00s system 61% cpu 0.007 total
+squiggle_30x30.ppm : 0.01s user 0.00s system 90% cpu 0.016 total
+lines_100x100.ppm : 0.09s user 0.01s system 94% cpu 0.099 total
+data_structures_300x300.ppm : 0.79s user 0.00s system 99% cpu 0.798 total
+dots_1000x1000.ppm : 10.97s user 0.04s system 99% cpu 11.024 total
 
 Discussion:
-
+Looking at the timing experiment data for the fast marching method, when using it for the smaller pictures, there really isn't much
+of a difference. However, once we start getting into the bigger pictures, the difference is incredible, it is way faster. Especially
+for the 1000x1000 pixels image, it ran in only 10-11 seconds. When I ran that image with the other methods, it did not finish running
+even after 30 minutes, which is really surprising. Overall, I believe that algrithm/method is a lot faster and way more applicable 
+in the real world where images are using 1920 x 1080 p. 
 
 
 DISTANCE FIELD VISUALIZATIONS FOR EXTRA CREDIT:
-
-
-
 
 FAST MARCHING METHOD (with a hash table) FOR EXTRA CREDIT:
 
